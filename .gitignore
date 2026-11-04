@@ -1,0 +1,27 @@
+# Dados reais e saídas locais
+*.xlsx
+*.xls
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+!dados/**/.gitkeep
+
+# Ambiente Java (futuro)
+target/
+build/
+out/
+.gradle/
+*.class
+
+# IDE e SO
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Variáveis e credenciais
+.env
+.env.*
+*.key

@@ -1,0 +1,11 @@
+flowchart TD
+    A["Relatorios Excel e CSV externos"] --> B["Importador Java Apache POI"]
+    B --> C["Normalizacao e comparacao"]
+    D[("BASE_GERAL.xlsx")] --> C
+    C --> E["Solicitacoes e divergencias"]
+    E --> F["Apoio ou ADM revisa"]
+    F --> G["Aplicar somente decisoes aprovadas"]
+    G --> H["Gravar copia temporaria e validar"]
+    H --> I["Backup e substituicao segura da base"]
+    I --> D
+    D --> J["Relatorios Excel e CSV"]

@@ -1,0 +1,26 @@
+flowchart TD
+    A["Importar Excel ou CSV"] --> B["Criar lote de importacao"]
+    B --> C["Ler e normalizar dados"]
+    C --> D["Identificar numero do contrato"]
+    D --> E{"Contrato existente?"}
+    E -->|Nao| F["Validar novo registro"]
+    E -->|Sim| G["Comparar campos"]
+    G --> H{"Existem divergencias?"}
+    H -->|Nao| I["Manter dados atuais"]
+    H -->|Sim| J["Criar solicitacao de alteracao"]
+    J --> K["Apoio ou ADM analisa campos"]
+    K --> L{"Aprovar alteracao?"}
+    L -->|Nao| M["Recusar e registrar motivo"]
+    L -->|Sim| N["Verificar conflitos e validacoes"]
+    N --> O{"Conflito comercial passivel de confirmacao?"}
+    O -->|Nao| P["Aplicar alteracao valida"]
+    O -->|Sim| Q["Exibir aviso e solicitar confirmacao"]
+    Q --> R{"Usuario confirma?"}
+    R -->|Sim| P
+    R -->|Nao| S["Manter pendente"]
+    P --> T["Registrar historico"]
+    M --> T
+    F --> U["Cadastrar se valido"]
+    T --> V["Atualizar relatorios"]
+    U --> V
+    I --> V

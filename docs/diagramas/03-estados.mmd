@@ -1,0 +1,12 @@
+stateDiagram-v2
+    [*] --> Cadastrada
+    Cadastrada --> Agendada: Agendar
+    Agendada --> Instalada: Instalar
+    Cadastrada --> Cancelada: Cancelar
+    Agendada --> Cancelada: Cancelar
+    Instalada --> Cancelada: Cancelar
+    Cancelada --> Cadastrada: Reativar
+    note right of Cancelada
+        Reativacao exige autorizacao
+        do Apoio ou Administrador
+    end note

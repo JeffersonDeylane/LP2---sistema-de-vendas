@@ -1,0 +1,25 @@
+classDiagram
+    class RepositorioContrato {
+        <<interface>>
+        +buscarPorId(String) Contrato
+        +listar() List~Contrato~
+        +salvar(Contrato) void
+    }
+    class RepositorioContratoExcel {
+        -String caminhoBase
+        +buscarPorId(String) Contrato
+        +listar() List~Contrato~
+        +salvar(Contrato) void
+    }
+    class ServicoContrato {
+        -RepositorioContrato repositorio
+        +consultar(String) Contrato
+        +aplicarAlteracaoAprovada(Contrato) void
+    }
+    class GerenciadorArquivoExcel {
+        +abrirBase() void
+        +salvarComBackup() void
+    }
+    RepositorioContrato <|.. RepositorioContratoExcel
+    ServicoContrato --> RepositorioContrato
+    RepositorioContratoExcel --> GerenciadorArquivoExcel

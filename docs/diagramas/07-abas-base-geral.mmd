@@ -1,0 +1,90 @@
+erDiagram
+    USUARIOS {
+        string usuario_id PK
+        string nome
+        string login
+        string perfil
+    }
+    CONTRATOS {
+        string contrato_id PK
+        string numero_contrato
+        string empresa
+        string vendedor_id FK
+        string cliente_id FK
+    }
+    CLIENTES {
+        string cliente_id PK
+        string nome
+    }
+    ITENS_VENDA {
+        string item_id PK
+        string contrato_id FK
+        string produto_id FK
+        int quantidade
+        string status
+        decimal comissao_informada
+    }
+    PRODUTOS {
+        string produto_id PK
+        string tipo
+        string plano
+        string modalidade
+    }
+    SOLICITACOES {
+        string solicitacao_id PK
+        string contrato_id FK
+        string solicitante_id FK
+        string status
+    }
+    DECISOES {
+        string decisao_id PK
+        string solicitacao_id FK
+        string usuario_id FK
+        string resultado
+    }
+    HISTORICO {
+        string historico_id PK
+        string contrato_id FK
+        string usuario_id FK
+        string campo
+        string valor_anterior
+        string valor_novo
+        datetime data_hora
+    }
+    GRUPOS_CANCELAMENTO {
+        string grupo_id PK
+        string contrato_id FK
+        string responsavel_id FK
+    }
+    ITENS_CANCELADOS {
+        string registro_id PK
+        string grupo_id FK
+        string item_id FK
+        boolean reativado
+    }
+    IMPORTACOES {
+        string lote_id PK
+        string nome_arquivo
+        datetime data_importacao
+    }
+    TABELA_COMISSOES {
+        string politica_id PK
+        string produto_tipo
+        string modalidade
+        decimal valor
+        string vigencia
+    }
+
+    CLIENTES ||--o{ CONTRATOS : possui
+    USUARIOS ||--o{ CONTRATOS : vende
+    CONTRATOS ||--|{ ITENS_VENDA : contem
+    PRODUTOS ||--o{ ITENS_VENDA : identifica
+    CONTRATOS ||--o{ SOLICITACOES : recebe
+    USUARIOS ||--o{ SOLICITACOES : solicita
+    SOLICITACOES ||--o{ DECISOES : recebe
+    USUARIOS ||--o{ DECISOES : analisa
+    CONTRATOS ||--o{ HISTORICO : registra
+    USUARIOS ||--o{ HISTORICO : executa
+    CONTRATOS ||--o{ GRUPOS_CANCELAMENTO : possui
+    GRUPOS_CANCELAMENTO ||--|{ ITENS_CANCELADOS : agrupa
+    ITENS_VENDA ||--o{ ITENS_CANCELADOS : afetado

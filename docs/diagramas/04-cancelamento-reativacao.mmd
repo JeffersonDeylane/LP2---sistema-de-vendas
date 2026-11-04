@@ -1,0 +1,21 @@
+flowchart TD
+    A["Solicitar cancelamento"] --> B{"Tipo do produto"}
+    B -->|VIRTUA| C["Selecionar todos os produtos"]
+    B -->|TV| D["Selecionar todos exceto VIRTUA"]
+    B -->|CHIP, FONE ou outros| E["Selecionar somente o item"]
+    C --> F["Excluir itens ja cancelados"]
+    D --> F
+    E --> F
+    F --> G["Registrar grupo de cancelamento"]
+    G --> H["Cancelar itens efetivamente afetados"]
+    H --> I["Registrar usuario, data e motivo"]
+    I --> J{"Reativacao solicitada?"}
+    J -->|Nao| K["Manter cancelamento"]
+    J -->|Sim| L{"Apoio ou ADM autoriza?"}
+    L -->|Nao| M["Manter situacao atual"]
+    L -->|Sim| N["Consultar grupo original"]
+    N --> O["Identificar itens cancelados pelo grupo"]
+    O --> P["Verificar alteracoes posteriores"]
+    P --> Q["Reativar somente itens permitidos para Cadastrada"]
+    Q --> R["Registrar historico da reativacao"]
+    R --> S["Recalcular estado e comissoes"]

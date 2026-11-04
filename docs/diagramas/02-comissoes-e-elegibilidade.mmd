@@ -1,0 +1,45 @@
+classDiagram
+    direction TB
+    class PoliticaComissao {
+        <<interface>>
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    class ComissaoPorPlano {
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    class ComissaoPorCombo {
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    class ComissaoPorQuantidade {
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    class ComissaoPorOperacao {
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    PoliticaComissao <|.. ComissaoPorPlano
+    PoliticaComissao <|.. ComissaoPorCombo
+    PoliticaComissao <|.. ComissaoPorQuantidade
+    PoliticaComissao <|.. ComissaoPorOperacao
+
+    class PoliticaElegibilidade {
+        <<interface>>
+        +podePagar(OperacaoComercial) boolean
+    }
+    class ElegibilidadeVenda {
+        +podePagar(OperacaoComercial) boolean
+    }
+    class ElegibilidadeMudanca {
+        +podePagar(OperacaoComercial) boolean
+    }
+    PoliticaElegibilidade <|.. ElegibilidadeVenda
+    PoliticaElegibilidade <|.. ElegibilidadeMudanca
+
+    class CalculadoraComissao {
+        +calcular(OperacaoComercial) BigDecimal
+    }
+    class ApuradorComissoes {
+        +apurar(List~OperacaoComercial~)
+    }
+    CalculadoraComissao --> PoliticaComissao
+    ApuradorComissoes --> CalculadoraComissao
+    ApuradorComissoes --> PoliticaElegibilidade

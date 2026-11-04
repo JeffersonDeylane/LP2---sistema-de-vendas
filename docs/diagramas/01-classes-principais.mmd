@@ -1,0 +1,72 @@
+classDiagram
+    direction TB
+
+    class Usuario {
+        <<abstract>>
+        -Long id
+        -String nome
+        -String login
+        -String senhaHash
+        +temPermissao(Permissao) boolean
+    }
+    class Vendedor {
+        +solicitarAlteracao()
+        +solicitarReativacao()
+    }
+    class Apoio {
+        +aprovarSolicitacao()
+        +recusarSolicitacao()
+        +reativarVenda()
+    }
+    class Administrador {
+        +gerenciarUsuarios()
+        +gerarRelatorio()
+    }
+    Usuario <|-- Vendedor
+    Usuario <|-- Apoio
+    Usuario <|-- Administrador
+
+    class Cliente {
+        -Long id
+        -String nome
+        -String documento
+    }
+    class Contrato {
+        -String numero
+        -List~ItemVenda~ itens
+        +obterProdutoPrincipal() ItemVenda
+        +obterStatusGeral() StatusVenda
+        +calcularComissaoTotal() BigDecimal
+    }
+    class Produto {
+        -Long id
+        -String descricao
+        -TipoProduto tipo
+        -String modalidade
+    }
+    class ItemVenda {
+        -Long id
+        -int quantidade
+        -StatusVenda status
+        -BigDecimal comissaoInformada
+        +alterarStatus(StatusVenda)
+    }
+    class OperacaoComercial {
+        <<abstract>>
+        -Long id
+        -LocalDate dataCadastro
+    }
+    class VendaComercial
+    class MudancaTecnologia
+    class SeletorProdutoPrincipal {
+        +selecionar(Contrato) ItemVenda
+    }
+
+    OperacaoComercial <|-- VendaComercial
+    OperacaoComercial <|-- MudancaTecnologia
+    VendaComercial --> Contrato
+    OperacaoComercial --> Vendedor : responsavel
+    Cliente "1" --> "0..*" Contrato
+    Contrato "1" *-- "1..*" ItemVenda
+    ItemVenda "*" --> "1" Produto
+    Contrato ..> SeletorProdutoPrincipal
