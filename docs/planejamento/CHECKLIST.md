@@ -4,13 +4,13 @@ Marcação: `[ ]` não iniciado, `[~]` em andamento, `[x]` concluído.
 Em cada etapa, preencher: **Responsável:** _____ | **Prazo:** _____ | **Evidência:** _____.
 
 ## Etapa 0 — Repositório e organização
-- [~] Criar repositório no GitHub e subir esta estrutura.
+- [x] Criar repositório no GitHub e subir esta estrutura.
 - [ ] Definir três responsáveis e regras de revisão de alterações.
 - [ ] Criar quadro de tarefas (GitHub Issues ou Projects, opcional).
-- [ ] Conferir que nenhuma planilha real ou credencial será publicada.
+- [~] Conferir que nenhuma planilha real ou credencial será publicada.
 
 ## Etapa 1 — Refinar decisões
-- [ ] Revisar e aprovar RN01–RN11 no grupo.
+- [~] Revisar e aprovar RN01–RN11 no grupo.
 - [ ] Definir identificação de contrato por número ou empresa+número.
 - [ ] Confirmar tabela completa de comissões e validade dos valores.
 - [ ] Definir elegibilidade de itens secundários (RN10).
