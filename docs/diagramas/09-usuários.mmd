@@ -1,0 +1,38 @@
+
+classDiagram
+    class Usuario {
+        <<abstract>>
+        -int id
+        -String nome
+        -String login
+        -String senhaHash
+        -boolean ativo
+        +getId() int
+        +getNome() String
+        +getLogin() String
+        +isAtivo() boolean
+        +alterarNome(String) void
+        +alterarLogin(String) void
+        +ativar() void
+        +desativar() void
+        +podeAprovarAlteracoes() boolean
+        +podeGerenciarUsuarios() boolean
+    }
+
+    class Vendedor {
+        +podeAprovarAlteracoes() boolean
+        +podeGerenciarUsuarios() boolean
+    }
+    class Apoio {
+        +podeAprovarAlteracoes() boolean
+        +podeGerenciarUsuarios() boolean
+    }
+    class Administrador {
+        +podeAprovarAlteracoes() boolean
+        +podeGerenciarUsuarios() boolean
+    }
+
+    Usuario <|-- Vendedor
+    Usuario <|-- Apoio
+    Usuario <|-- Administrador
+  

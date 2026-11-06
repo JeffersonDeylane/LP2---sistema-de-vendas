@@ -2,23 +2,25 @@
 public abstract class Usuario {
 
     // Atributos
-    private int id;
+    private final int id; 
+    //id não muda
     private String nome;
     private String login;
-    private String senha;
+    private String senhaHash;
     private boolean ativo;
 
     // Construtor
     public Usuario(int id, String nome, String login,
-                   String senha, boolean ativo) {
-        this.id = id;
-        this.nome = nome;
-        this.login = login;
-        this.senha = senha;
+                   String senhaHash, boolean ativo) {
+
+        this.id = Validador.inteiroPositivo(id, "ID");
+        alterarNome(nome);
+        alterarLogin(login);
+        definirSenhaHash(senhaHash);
         this.ativo = ativo;
     }
 
-    // Getters
+    // PEGADORES
     public int getId() {
         return id;
     }
@@ -35,35 +37,43 @@ public abstract class Usuario {
         return ativo;
     }
 
-    // Setters
-    public void setNome(String nome) {
-        this.nome = nome;
+    
+
+    // Métodos para alterar os dados
+    public void alterarNome(String novoNome) {
+        this.nome = Validador.textoObrigatorio(
+            novoNome, "Nome"
+        );
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void alterarLogin(String novoLogin) {
+        this.login = Validador.textoObrigatorio(
+            novoLogin, "Login"
+        );
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    // Métodos relacionados à senha
+    public String getSenhaHash() {
+        return senhaHash;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    public void definirSenhaHash(String novoHash) {
+        this.senhaHash = Validador.textoObrigatorio(
+            novoHash, "Hash da senha"
+        );
     }
 
-    // Métodos do usuário
-    public boolean verificarSenha(String senha) {
-        return this.senha.equals(senha);
+    // Métodos relacionados ao estado da conta
+    public void ativar() {
+        this.ativo = true;
     }
 
-    public void alterarSenha(String senhaAtual, String novaSenha) {
-        if (verificarSenha(senhaAtual)) {
-            setSenha(novaSenha);
-        }
+    public void desativar() {
+        this.ativo = false;
     }
 
-    // Métodos abstratos
-    public abstract String getPerfil();
-    public abstract void exibirMenu();
+    // Métodos abstratos: implementados pelas subclasses
+    public abstract boolean podeAprovarAlteracoes();
+
+    public abstract boolean podeGerenciarUsuarios();
 }

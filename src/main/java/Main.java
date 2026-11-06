@@ -3,10 +3,57 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void Main(String[] args) {
+    public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         boolean executando = true;
+        
+
+        // Criação de um objeto Vendedor para testes, que herda de Usuário
+                        //TESTE
+        Vendedor vendedor = new Vendedor(
+            1,
+            "João Silva",
+            "joao.silva",
+            "hash123",
+            true,
+            "V001"
+        );
+
+        System.out.println("Nome: " + vendedor.getNome());
+        System.out.println("Login: " + vendedor.getLogin());
+        System.out.println("Matrícula: " + vendedor.getMatricula());
+
+        System.out.println(
+            "Pode aprovar: " + vendedor.podeAprovarAlteracoes()
+        );
+
+        System.out.println(
+            "Pode solicitar: " + vendedor.podeSolicitarAlteracao()
+        );
+
+        // Testar a validação de matrícula
+        try {
+            vendedor.setMatricula("   ");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+        // Testar a validação de login
+        try {
+            vendedor.alterarLogin("");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+
+
+
+
+
+
+
+
 
         System.out.println("==================================");
         System.out.println("    SISTEMA DE VENDAS - LP2");
