@@ -7,14 +7,23 @@ import win32com.client as win32
 import os
 import re
 from datetime import datetime
+import sys
+from pathlib import Path
+
+for stream in (sys.stdout, sys.stderr):
+    if hasattr(stream, "reconfigure"):
+        stream.reconfigure(encoding="utf-8")
 
 # --- CONFIGURAÇÃO DE PASTAS ---
 # Cria as pastas automaticamente se elas não existirem
-PASTA_ENTRADA = r"C:\Users\Usuario\Desktop\programas\arquivos_para_processar"
-PASTA_SAIDA = r"C:\Users\Usuario\Desktop\programas\arquivos_para_processar\saida"
-PASTA_SAIDA_DO_BOT = r"C:\Users\Usuario\Desktop\programas\bot-whatsapp-estrutura_NOVO\dados"
+PASTA_PROJETO = Path(__file__).resolve().parents[3]
+PASTA_DADOS = PASTA_PROJETO / "dados"
+PASTA_ENTRADA = PASTA_DADOS / "importacao"
+PASTA_SAIDA = PASTA_DADOS / "exportacao" / "arquivos_para_processar" / "saida"
+PASTA_SAIDA_DO_BOT = PASTA_DADOS / "exportacao"
 os.makedirs(PASTA_ENTRADA, exist_ok=True)
 os.makedirs(PASTA_SAIDA, exist_ok=True)
+os.makedirs(PASTA_SAIDA_DO_BOT, exist_ok=True)
 
 # Obtém a data atual para o nome do arquivo (ex: 20.04)
 data_atual = datetime.now().strftime("%d.%m")
@@ -675,7 +684,7 @@ def processar_base(caminho_arquivo, nome_arquivo):
     salvar_analitico(df, caminho_saida)
 
 
-    caminho_base = r"C:\Users\Usuario\Desktop\programas\arquivos_para_processar\analitico_da_claro\claro.xlsx"
+    caminho_base = PASTA_ENTRADA / "analitico_da_claro" / "claro.xlsx"
     # Relê uma única vez para preservar a inferência de tipos usada nos cruzamentos.
     df_analitico = pd.read_excel(caminho_saida, sheet_name="Analítico")
     wb = load_workbook(caminho_saida)
