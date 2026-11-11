@@ -1,3 +1,6 @@
+#rodar main:
+ & ".\FERRAMENTAS\apache-maven-3.10.0\bin\mvn.cmd" exec:java "-Dexec.mainClass=Main"
+usando o maven por causa do tratamento de planilha da transpiração.
 # Sistema de Gestão Comercial Flexível
 
 Projeto de Linguagem de Programação II em Java, em evolução para uma plataforma de gestão comercial de produtos e serviços de diferentes segmentos.

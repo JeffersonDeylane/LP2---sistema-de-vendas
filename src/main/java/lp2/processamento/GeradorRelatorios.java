@@ -9,6 +9,8 @@ import java.util.*;
  *  Atenção: são abas de RESUMO, não objetos de tabela dinâmica do Excel. */
 public final class GeradorRelatorios {
     private static final List<String> CAMPOS = List.of("VIRTUA", "CHIP", "PORT", "TV", "SOMA", "Valor");
+    private static final String VAZIO = "(blank)";
+    private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public void criar(Workbook wb, TabelaDados analitico) {
         resumoSupervisorVendedor(wb, analitico);
@@ -41,33 +43,51 @@ public final class GeradorRelatorios {
         Map<String,Map<String,Integer>> porVendedor = new TreeMap<>();
         Set<String> datas = new TreeSet<>();
         for (Map<String,Object> linha : dados.linhas()) {
-            String vendedor = TabelaDados.texto(linha.get("Vendedor"));
-            String data = dataChave(linha.get("DataInstalacao"));
-            if (vendedor.isEmpty() || data.isEmpty()) continue;
+            String vendedor = valorPivot(linha.get("Vendedor"));
+            LocalDate dataValor = dataChave(linha.get("DataInstalacao"));
+            String data = dataValor == null ? VAZIO : dataValor.toString();
             datas.add(data);
-            porVendedor.computeIfAbsent(vendedor, k -> new TreeMap<>()).merge(data, 1, Integer::sum);
+            int contagem = TabelaDados.texto(linha.get("Produtos")).isEmpty() ? 0 : 1;
+            porVendedor.computeIfAbsent(vendedor, k -> new TreeMap<>())
+                    .merge(data, contagem, Integer::sum);
         }
-        List<String> colunas = new ArrayList<>(); colunas.add("Vendedor"); colunas.addAll(datas); colunas.add("Total");
+        List<String> colunas = new ArrayList<>();
+        colunas.add("Vendedor");
+        for (String data : datas) {
+            colunas.add(data.equals(VAZIO) ? VAZIO : LocalDate.parse(data).format(FORMATO_DATA));
+        }
+        colunas.add("Total");
         TabelaDados saida = new TabelaDados(colunas);
         for (Map.Entry<String,Map<String,Integer>> entrada : porVendedor.entrySet()) {
             Map<String,Object> linha = new LinkedHashMap<>(); linha.put("Vendedor", entrada.getKey());
             int total=0;
-            for (String d : datas) { int n = entrada.getValue().getOrDefault(d,0); linha.put(d,n); total+=n; }
+            for (String d : datas) {
+                int n = entrada.getValue().getOrDefault(d,0);
+                String coluna = d.equals(VAZIO) ? VAZIO : LocalDate.parse(d).format(FORMATO_DATA);
+                linha.put(coluna,n);
+                total+=n;
+            }
             linha.put("Total", total); saida.adicionarLinha(linha);
         }
         PlanilhasIO.escreverTabela(wb, "Planilha2", saida, false);
     }
-    private String dataChave(Object valor) {
-        if (valor == null) return "";
-        if (valor instanceof LocalDateTime dt) return dt.toLocalDate().toString();
-        if (valor instanceof LocalDate d) return d.toString();
-        if (valor instanceof java.util.Date d) return new java.text.SimpleDateFormat("yyyy-MM-dd").format(d);
+    private String valorPivot(Object valor) {
+        String texto = TabelaDados.texto(valor);
+        return texto.isEmpty() ? VAZIO : texto;
+    }
+
+    private LocalDate dataChave(Object valor) {
+        if (valor == null) return null;
+        if (valor instanceof LocalDateTime dt) return dt.toLocalDate();
+        if (valor instanceof LocalDate d) return d;
+        if (valor instanceof java.util.Date d)
+            return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         String s = TabelaDados.texto(valor);
-        if (s.isEmpty()) return "";
+        if (s.isEmpty()) return null;
         for (DateTimeFormatter f : List.of(DateTimeFormatter.ofPattern("dd/MM/yyyy"), DateTimeFormatter.ISO_LOCAL_DATE)) {
-            try { return LocalDate.parse(s.substring(0, Math.min(10, s.length())), f).toString(); }
+            try { return LocalDate.parse(s.substring(0, Math.min(10, s.length())), f); }
             catch (Exception ignored) {}
         }
-        return s;
+        return null;
     }
 }

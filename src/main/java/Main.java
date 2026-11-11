@@ -1,4 +1,9 @@
 
+import lp2.processamento.ProcessadorPlanilhas;
+import lp2.processamento.ResultadoProcessamento;
+
+
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class Main {
@@ -64,6 +69,7 @@ public class Main {
             System.out.println("\n===== MENU PRINCIPAL =====");
             System.out.println("1 - Login");
             System.out.println("2 - Sobre o sistema");
+            System.out.println("3 - Tratamento de planilha");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -80,6 +86,26 @@ public class Main {
                     System.out.println("e comissões de vendedores.");
                     break;
 
+                case "3":
+                    System.out.println("Iniciando tratamento das planilhas...");
+
+                    ResultadoProcessamento resultado =
+                        new ProcessadorPlanilhas(Path.of(".")).executar();
+
+                    if (resultado.getArquivosGerados().isEmpty()) {
+                        System.out.println("Nenhum arquivo foi processado.");
+                    } else {
+                        System.out.println("Processamento finalizado!");
+                        System.out.println("Arquivo consolidado:");
+                        System.out.println(resultado.getConsolidado());
+                    }
+
+                    System.out.println("Arquivos gerados:");
+                    resultado.getArquivosGerados().forEach(System.out::println);
+                    resultado.getAvisos().forEach(aviso ->
+                        System.out.println("Aviso: " + aviso));
+
+                    break;
                 case "0":
                     System.out.println("Encerrando o sistema...");
                     executando = false;

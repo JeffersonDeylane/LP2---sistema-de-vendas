@@ -27,6 +27,7 @@ public final class ProcessadorPlanilhas {
             Files.createDirectories(config.entrada());
             Files.createDirectories(config.saida());
             Files.createDirectories(config.exportacao());
+            limparPastaSaida();
             List<Path> entradas;
             try (Stream<Path> arquivos = Files.list(config.entrada())) {
                 entradas = arquivos.filter(Files::isRegularFile)
@@ -37,19 +38,14 @@ public final class ProcessadorPlanilhas {
                 avisos.add("Nenhum CSV/XLS/XLSX em " + config.entrada());
                 return new ResultadoProcessamento(gerados, null, avisos);
             }
-            // Não apagamos arquivos existentes: segurança melhor que a limpeza indiscriminada do script original.
             String hoje = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM"));
-            Set<String> nomesCriados = new HashSet<>();
+            Set<Path> arquivosGerados = new LinkedHashSet<>();
             for (Path entrada : entradas) {
                 try {
                     String nome = entrada.getFileName().toString();
                     TabelaDados tabela = tratador.tratar(PlanilhasIO.ler(entrada,"Analítico"), nome);
                     String empresa = nome.toUpperCase(Locale.ROOT).contains("VNA") ? "VNA" : "RDT";
                     String nomeSaida = empresa + " - ANALITICO " + hoje + ".xlsx";
-                    if (!nomesCriados.add(nomeSaida)) {
-                        avisos.add("Mais de uma entrada da empresa " + empresa + "; evite sobrescrita e renomeie/una os arquivos de origem.");
-                        continue;
-                    }
                     Path saida = config.saida().resolve(nomeSaida);
                     try (Workbook wb = new XSSFWorkbook()) {
                         PlanilhasIO.escreverTabela(wb, "Analítico", tabela, true);
@@ -63,16 +59,25 @@ public final class ProcessadorPlanilhas {
                         relatorios.criar(wb, tabela);
                         PlanilhasIO.salvar(wb, saida);
                     }
-                    gerados.add(saida);
+                    arquivosGerados.add(saida);
                     System.out.printf("Processado %s (%d linhas)%n", saida.getFileName(), tabela.linhas().size());
                 } catch (Exception e) {
                     avisos.add("Falha ao processar " + entrada.getFileName() + ": " + e.getMessage());
                 }
             }
+            gerados.addAll(arquivosGerados);
             Path consolidado = new ConsolidadorVendas().consolidar(gerados, config.exportacao().resolve("vendas.xlsx"));
             return new ResultadoProcessamento(gerados, consolidado, avisos);
         } catch (IOException e) {
             throw new ProcessamentoException("Falha de entrada/saída do processamento", e);
+        }
+    }
+
+    private void limparPastaSaida() throws IOException {
+        try (Stream<Path> arquivos = Files.list(config.saida())) {
+            for (Path arquivo : arquivos.filter(Files::isRegularFile).toList()) {
+                Files.delete(arquivo);
+            }
         }
     }
 }

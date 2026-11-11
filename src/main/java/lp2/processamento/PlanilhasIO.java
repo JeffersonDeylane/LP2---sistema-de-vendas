@@ -62,7 +62,7 @@ public final class PlanilhasIO {
         if (c == null || c.getCellType() == CellType.BLANK) return null;
         CellType tipo = c.getCellType() == CellType.FORMULA ? c.getCachedFormulaResultType() : c.getCellType();
         return switch (tipo) {
-            case STRING -> c.getRichStringCellValue().getString();
+            case STRING -> c.getStringCellValue();
             case NUMERIC -> DateUtil.isCellDateFormatted(c) ? c.getLocalDateTimeCellValue() : c.getNumericCellValue();
             case BOOLEAN -> c.getBooleanCellValue();
             default -> formatter.formatCellValue(c);

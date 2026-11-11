@@ -32,11 +32,34 @@ public final class TabelaDados {
     public static String texto(Object valor) { return valor == null ? "" : valor.toString().trim(); }
     public static int inteiro(Object valor) {
         if (valor instanceof Number n) return n.intValue();
-        try { return (int) Double.parseDouble(texto(valor)); } catch (NumberFormatException ex) { return 0; }
+        return (int) numero(valor);
     }
     public static double numero(Object valor) {
         if (valor instanceof Number n) return n.doubleValue();
-        try { return Double.parseDouble(texto(valor).replace(",", ".")); } catch (NumberFormatException ex) { return 0; }
+        String s = texto(valor).replace("\u00a0", "").replaceAll("\\s+", "");
+        if (s.isEmpty()) return 0;
+        boolean negativoContabil = s.startsWith("(") && s.endsWith(")");
+        if (negativoContabil) s = s.substring(1, s.length() - 1);
+        s = s.replaceAll("[^0-9,\\.\\-+]", "");
+        int ultimaVirgula = s.lastIndexOf(',');
+        int ultimoPonto = s.lastIndexOf('.');
+        if (ultimaVirgula >= 0 && ultimoPonto >= 0) {
+            if (ultimaVirgula > ultimoPonto) {
+                s = s.replace(".", "").replace(',', '.');
+            } else {
+                s = s.replace(",", "");
+            }
+        } else if (ultimaVirgula >= 0) {
+            int digitosAposVirgula = s.length() - ultimaVirgula - 1;
+            if (digitosAposVirgula == 3 && ultimaVirgula > 0) s = s.replace(",", "");
+            else s = s.replace(',', '.');
+        }
+        try {
+            double numero = Double.parseDouble(s);
+            return negativoContabil ? -numero : numero;
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
     }
     public TabelaDados selecionarColunas(List<String> selecao) {
         TabelaDados t = new TabelaDados(selecao);

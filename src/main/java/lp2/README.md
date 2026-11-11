@@ -4,7 +4,7 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 
 ## Instalar no projeto existente
 
-1. Copie **a pasta** `src/main/java/lp2/processamento/` para `src/main/java/lp2/processamento/` de seu repositório.
+1. Copie **a pasta** `src/main/java/lp2/processamento/` para `src/main/java/lp2/processamento/` de seu repositório.re
 2. Copie `pom.xml` para a raiz do repositório **se você ainda não possui pom.xml**. Se já possui, apenas adicione as dependências indicadas abaixo (não substitua o seu).
 3. Mantenha seus arquivos `Main.java`, `Usuario.java`, `Vendedor.java`, `Validador.java`: o ZIP **não os substitui**.
 4. No `Main.java`, importe `lp2.processamento.ProcessadorPlanilhas` e `ResultadoProcessamento`, conforme `EXEMPLO_INTEGRACAO_MAIN.txt`.
@@ -38,8 +38,9 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 - Mantém identificação de empresa VNA/RDT pelo nome do arquivo, e reclassificação de `ZAIRO JUNIOR`/`EDVALDO SANTOS` como `PE`.
 - Mantém filtros específicos para CHIP, desistência/venda bruta e parceiros da Claro, e cruzamentos por contrato com divergências em vermelho/verde.
 - As abas `Planilha1` e `Planilha2` são **resumos tabulares, não tabelas dinâmicas nativas do Excel**, pois `win32com.client` automatiza Excel/Windows e não tem substituição direta na API utilizada. Os campos agregados são os mesmos, mas formatação, agrupamento automático de pivot, cache e atualização interativa não são equivalentes.
-- O script Python antigo apaga **todos** os arquivos da pasta de saída; a versão Java **não apaga arquivos antigos** por segurança. Apenas arquivos processados nesta execução são consolidados.
-- Se houver dois arquivos de entrada da **mesma empresa**, o segundo será ignorado com aviso para evitar sobrescrever a saída. Não há mesclagem automática das entradas dessa mesma empresa.
+- A cada execução, a versão Java limpa os arquivos regulares da pasta `dados/exportacao/arquivos_para_processar/saida`, como o script Python. Subpastas não são removidas.
+- Se houver mais de um arquivo de entrada da **mesma empresa**, cada um é processado e substitui a mesma saída; a última entrada em ordem alfabética prevalece, como ocorre quando o Python sobrescreve o mesmo nome de arquivo. A consolidação inclui uma única cópia dessa saída.
+- O resumo `Planilha2` agrupa por vendedor e data de instalação e conta somente linhas com `Produtos` preenchido, preservando também as categorias em branco do pivô Python.
 - Não altera `BASE_GERAL.xlsx`, nem implementa aprovação de divergências, auditoria, comissão ou regras de cancelamento: esses são módulos de domínio que devem ficar separados do processo ETL de planilhas.
 - Para evitar inconsistência numérica, confira os resultados contra o Python antes de usar dados reais. A leitura CSV usa UTF-8; outras codificações precisam de adaptação.
 - O valor `Valor` da planilha é tratado como valor numérico para sumarização, sem inferir que se trata de receita de cliente (pode ser comissão, conforme base).
@@ -52,4 +53,4 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 
 ## Verificação
 
-O código foi organizado e submetido à verificação estática local, mas **não executado contra suas planilhas originais** neste ambiente, pois a planilha original não foi anexada junto a esta solicitação e as dependências Maven não estão disponíveis localmente. Portanto não representa garantia de saída idêntica ao Python em todos os tipos de célula/arquivo.
+Os testes automatizados verificam os resumos, categorias em branco, substituição de entradas da mesma empresa e consolidação. A execução contra as planilhas reais ainda deve ser conferida; os pivôs Java são resumos estáticos e não têm o cache, a atualização interativa ou todos os recursos de formatação dos pivôs nativos do Excel.
