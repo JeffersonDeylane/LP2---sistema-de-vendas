@@ -11,7 +11,7 @@ Em cada etapa, preencher: **Responsável:** _____ | **Prazo:** _____ | **Evidên
 
 ## Etapa 1 — Refinar decisões
 - [~] Revisar e aprovar RN01–RN11 no grupo.
-- [ ] Definir identificação de contrato por número ou empresa+número.
+- [X] Definir identificação de contrato por número ou empresa+número.
 - [ ] Confirmar tabela completa de comissões e validade dos valores.
 - [ ] Definir elegibilidade de itens secundários (RN10).
 - [ ] Definir regra para contratos só com serviços adicionais.

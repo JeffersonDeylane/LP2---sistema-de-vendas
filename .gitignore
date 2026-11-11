@@ -1,5 +1,5 @@
 # Dados reais e saídas locais
-
+//mandando os dados xlsx por enquanto
 *.xls
 *.csv
 *.db
