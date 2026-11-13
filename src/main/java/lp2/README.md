@@ -1,5 +1,7 @@
 # Portabilidade Java — processamento de planilhas LP2
 
+> Para estudar o fluxo, as chamadas entre classes e os conceitos de POO, leia o [Guia de processamento de planilhas](../../../../docs/planejamento/GUIA_PROCESSAMENTO_PLANILHAS.md).
+
 Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para Java 17 com **Apache POI** e **Apache Commons CSV**.
 
 ## Instalar no projeto existente
