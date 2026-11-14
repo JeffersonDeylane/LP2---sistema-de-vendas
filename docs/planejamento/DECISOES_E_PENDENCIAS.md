@@ -1,5 +1,23 @@
 # Decisões e pendências
 
+## Persistência dos usuários — P0-03, 14/11/2026
+
+- Implementada em `RepositorioUsuariosExcel`, com esquema explícito documentado em
+  [ESTRUTURA_DADOS.md](ESTRUTURA_DADOS.md), IDs preservados e reconstrução dos três perfis.
+- Reutilizada a infraestrutura POI de `PlanilhasIO`; adicionada gravação com backup
+  e troca exclusivamente atômica. A gravação anterior dos relatórios não foi alterada.
+- Leitura estrita na base de usuários: a rotina genérica de importação pode usar
+  outra aba e converter dados, comportamentos inadequados a identidades e perfis.
+- Atualização por ID, validação completa antes de gravar e preservação das outras
+  abas. Não existe recuperação automática a partir de arquivo inválido ou backup.
+- Escritas serializadas dentro da JVM; uso por um processo escritor de cada vez.
+  Coordenação entre processos e reserva concorrente de IDs permanecem pendentes.
+- Cadastro autorizado, geração de hashes, login e sessão continuam nas próximas
+  tarefas. Esta entrega não conclui RN08, RN09 ou histórico comercial.
+
+As decisões comerciais abaixo são históricas; em caso de conflito, prevalece a
+especificação vigente de regras de negócio.
+
 ## Decisões confirmadas
 - Aplicação Java com primeira versão persistida em **uma planilha Excel central** (`BASE_GERAL.xlsx`, múltiplas abas); sem banco de dados nesta etapa.
 - Fontes: planilhas Excel/CSV exportadas de outros sistemas. Python existente continua independente; integração por arquivos.
@@ -26,4 +44,4 @@
 - [ ] Políticas para pagamentos já realizados e posterior cancelamento/estorno.
 - [ ] Efeito de alterações posteriores sobre reativação de grupos antigos.
 - [ ] Modelo de autenticação sem expor senhas no Excel; preferir credenciais com hash e acesso restrito.
-- [ ] Concorrência na atualização da planilha central; backup e gravação atômica.
+- [ ] Concorrência entre processos na atualização da planilha central; backup e gravação atômica de usuários já implementados na P0-03.

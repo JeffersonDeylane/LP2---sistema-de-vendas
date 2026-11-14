@@ -4,11 +4,24 @@ import lp2.processamento.ResultadoProcessamento;
 
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+
+        RepositorioUsuariosExcel repositorio = args.length == 0
+            ? new RepositorioUsuariosExcel()
+            : new RepositorioUsuariosExcel(Path.of(args[0]));
+        List<Usuario> usuariosPersistidos;
+        try {
+            usuariosPersistidos = repositorio.listar();
+        } catch (PersistenciaUsuariosException e) {
+            System.err.println("Falha ao carregar usuários: " + e.getMessage());
+            return;
+        }
+        System.out.println("Usuários persistidos carregados: " + usuariosPersistidos.size());
 
         Scanner scanner = new Scanner(System.in);
         boolean executando = true;

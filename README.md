@@ -3,6 +3,33 @@
 usando o maven por causa do tratamento de planilha da transpiração.
 # Sistema de Gestão Comercial Flexível
 
+## Atualização P0-03 — 14/11/2026
+
+`RepositorioUsuariosExcel` salva e atualiza os três perfis na aba `USUARIOS` de
+`dados/BASE_GERAL.xlsx`, preservando IDs, demais usuários e outras abas. A base é
+lida na inicialização. Arquivo ausente não cria contas; base inválida interrompe
+a inicialização com uma mensagem de erro e não é sobrescrita.
+
+Para executar com o Maven da raiz:
+
+```powershell
+mvn compile exec:java "-Dexec.mainClass=Main"
+# Caminho alternativo da base, passado como primeiro argumento:
+mvn exec:java "-Dexec.mainClass=Main" "-Dexec.args=dados/BASE_GERAL.xlsx"
+mvn test
+```
+
+Cada atualização prepara e verifica um temporário, guarda a versão anterior em
+`BASE_GERAL.xlsx.bak` e exige substituição atômica. A base, o backup e seus
+temporários padrão estão no `.gitignore`. Não são gerados usuários administrativos
+nem persistidos os exemplos da demonstração. Login e cadastro administrativo
+continuam pendentes.
+
+Foram executados **54 testes, sem falhas, erros ou ignorados**. Veja o
+[esquema implementado](docs/planejamento/ESTRUTURA_DADOS.md) e o
+[relatório da P0-03](docs/planejamento/P0-03_PERSISTENCIA_USUARIOS.md), incluindo
+API, comandos reais de validação e limitações de concorrência.
+
 ## Atualização P0-01 — 14/11/2026
 
 `Usuario` agora possui as especializações `Vendedor`, `Apoio` e `Administrador`.

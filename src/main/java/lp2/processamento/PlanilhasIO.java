@@ -9,9 +9,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Consumer;
 
 /** Operações Excel e CSV, encapsulando a biblioteca Apache POI. */
 public final class PlanilhasIO {
@@ -140,6 +143,109 @@ public final class PlanilhasIO {
             try { Files.move(temp, destino, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE); }
             catch (AtomicMoveNotSupportedException e) { Files.move(temp, destino, StandardCopyOption.REPLACE_EXISTING); }
         } finally { Files.deleteIfExists(temp); }
+    }
+
+    public static void salvarComBackup(Workbook planilha, Path destino) throws IOException {
+        byte[] anterior = Files.notExists(destino, LinkOption.NOFOLLOW_LINKS)
+            ? null : Files.readAllBytes(destino);
+        salvarComBackup(planilha, destino, anterior, verificacao -> { });
+    }
+
+    public static void salvarComBackup(Workbook planilha, Path destino, byte[] versaoAnterior,
+                                       Consumer<Workbook> validarConteudo) throws IOException {
+        Objects.requireNonNull(validarConteudo, "A validação do conteúdo é obrigatória.");
+        byte[] anterior = versaoAnterior == null ? null : versaoAnterior.clone();
+        Path arquivo = destino.toAbsolutePath().normalize();
+        Path pasta = arquivo.getParent();
+        Files.createDirectories(pasta);
+        Path temporario = Files.createTempFile(pasta, "." + arquivo.getFileName() + "-", ".tmp");
+        Path backupTemporario = null;
+        Throwable falha = null;
+        try {
+            try (FileChannel canal = FileChannel.open(temporario, StandardOpenOption.WRITE);
+                 OutputStream saida = Channels.newOutputStream(canal)) {
+                planilha.write(saida);
+                saida.flush();
+                canal.force(true);
+            }
+            validarPlanilha(temporario, validarConteudo);
+            verificarVersao(arquivo, anterior);
+            if (anterior != null) {
+                Path backup = arquivo.resolveSibling(arquivo.getFileName() + ".bak");
+                backupTemporario = Files.createTempFile(pasta, "." + arquivo.getFileName() + "-", ".tmp");
+                prepararBackup(arquivo, backupTemporario, anterior);
+                verificarVersao(arquivo, anterior);
+                substituirAtomicamente(backupTemporario, backup);
+                verificarVersao(backup, anterior);
+            }
+            verificarVersao(arquivo, anterior);
+            substituirAtomicamente(temporario, arquivo);
+        } catch (IOException | RuntimeException | Error e) {
+            falha = e;
+            throw e;
+        } finally {
+            limparTemporarios(falha, temporario, backupTemporario);
+        }
+    }
+
+    private static void validarPlanilha(Path arquivo, Consumer<Workbook> validarConteudo) throws IOException {
+        try (InputStream entrada = Files.newInputStream(arquivo);
+             Workbook verificacao = WorkbookFactory.create(entrada)) {
+            if (verificacao.getNumberOfSheets() == 0) {
+                throw new IOException("Planilha sem abas: " + arquivo);
+            }
+            validarConteudo.accept(verificacao);
+        }
+    }
+
+    private static void verificarVersao(Path arquivo, byte[] esperada) throws IOException {
+        boolean ausente = Files.notExists(arquivo, LinkOption.NOFOLLOW_LINKS);
+        if (esperada == null ? !ausente : ausente || !Arrays.equals(esperada, Files.readAllBytes(arquivo))) {
+            throw new IOException("Arquivo alterado externamente durante a gravação: " + arquivo
+                + ". Recarregue a base antes de tentar novamente.");
+        }
+    }
+
+    static void prepararBackup(Path arquivo, Path temporario, byte[] anterior) throws IOException {
+        try (InputStream entrada = Files.newInputStream(arquivo);
+             FileChannel canal = FileChannel.open(temporario, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+             OutputStream saida = Channels.newOutputStream(canal)) {
+            entrada.transferTo(saida);
+            saida.flush();
+            canal.force(true);
+        }
+        verificarVersao(temporario, anterior);
+        validarPlanilha(temporario, verificacao -> { });
+    }
+
+    static void substituirAtomicamente(Path origem, Path destino) throws IOException {
+        try {
+            Files.move(origem, destino, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException e) {
+            AtomicMoveNotSupportedException falha = new AtomicMoveNotSupportedException(
+                origem.toString(), destino.toString(), "Substituição atômica indisponível; operação cancelada.");
+            falha.initCause(e);
+            throw falha;
+        }
+    }
+
+    private static void limparTemporarios(Throwable falha, Path... arquivos) throws IOException {
+        IOException falhaLimpeza = null;
+        for (Path arquivo : arquivos) {
+            if (arquivo == null) continue;
+            try {
+                Files.deleteIfExists(arquivo);
+            } catch (IOException e) {
+                if (falha != null) {
+                    falha.addSuppressed(e);
+                } else if (falhaLimpeza == null) {
+                    falhaLimpeza = e;
+                } else {
+                    falhaLimpeza.addSuppressed(e);
+                }
+            }
+        }
+        if (falhaLimpeza != null) throw falhaLimpeza;
     }
 
     public static void salvarAnalitico(TabelaDados dados, Path destino) throws IOException {

@@ -1,5 +1,23 @@
 # Status Atual e Diagnóstico Técnico do Projeto
 
+## Atualização de usuários — 14/11/2026
+
+A P0-01 implementou Vendedor, Apoio e Administrador e suas capacidades
+polimórficas. A P0-03 acrescentou `RepositorioUsuariosExcel`, carga inicial pelo
+`Main`, atualização por ID, validação estrita da aba `USUARIOS`, backup da versão
+anterior e substituição exclusivamente atômica, reutilizando Apache POI.
+
+A suíte da raiz executou **54 testes sem falhas, erros ou ignorados**: 14 de
+usuários, 35 de persistência/inicialização e 5 de processamento. Os testes de
+falha preservaram os bytes da base anterior, incluindo bloqueio e somente leitura
+no Windows. Não houve uso de planilhas reais. Veja o
+[relatório da P0-03](planejamento/P0-03_PERSISTENCIA_USUARIOS.md).
+
+Persistência comercial, autenticação, cadastro administrativo e autorização por
+escopo continuam pendentes. A escrita entre processos requer uso exclusivo da
+base; somente operações da mesma JVM são serializadas. O diagnóstico abaixo é
+histórico, de 08/11/2026, e não descreve essas entregas posteriores.
+
 **Data da inspeção:** 08/11/2026, referência de calendário America/Sao_Paulo.
 
 **Commit de código examinado:** `b0355c29726ef2a00d1bd178103813e537cc9aab`.
