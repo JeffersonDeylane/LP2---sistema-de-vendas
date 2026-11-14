@@ -2,7 +2,7 @@
 
 **Jefferson · Marcone · Faby**
 
-Atualização: **13/11/2026** · Prazo: **a definir** · Responsáveis: **a escolher**
+Atualização: **14/11/2026** · Prazo: **a definir** · Responsáveis: **a escolher**
 
 Marcação: `[ ]` pendente, `[~]` parcialmente feito, `[x]` concluído com evidência.
 
@@ -15,14 +15,14 @@ Referência: [Requisitos da atividade — Unidade 03](../requisitos/REQUISITOS_A
 | [x] | Estrutura do repositório e documentação versionada | Código em `src/`, documentos em `docs/` e histórico Git local; equipe definida; envio ao GitHub ainda precisa ser confirmado. |
 | [x] | Configuração Java 17/Maven na raiz | `pom.xml` com Apache POI, Commons CSV e JUnit 4. |
 | [x] | Menu de terminal com processamento de planilhas integrado | `Main.java`, opção 3 chama `ProcessadorPlanilhas` e mostra arquivos/avisos. Login continua pendente. |
-| [x] | Base de usuários e validações | `Usuario` abstrata, `Vendedor` e `Validador`; atributos privados, matrícula, ativação/desativação e consultas de permissão. |
+| [x] | Base de usuários e validações | `Usuario` abstrata, `Vendedor`, `Apoio`, `Administrador` e `Validador`; matrícula, ativação/desativação e capacidades polimórficas. [Entrega P0-01](P0-01_USUARIOS.md), com 14 testes de usuários aprovados. |
 | [x] | Leitura e tratamento especializado de XLS/XLSX/CSV | `PlanilhasIO`, `TratadorAnalitico`, `ComplementadorClaro` e `NormalizadorContrato`. Não cadastra vendas do domínio genérico. |
 | [x] | Cruzamentos, consolidação e relatórios especializados | `CruzadorContratos`, `ConsolidadorVendas` e `GeradorRelatorios`; resumos estáticos, não pivôs nativos do Excel. |
 | [x] | Estratégias polimórficas na integração | `RegraProduto`, `RegraPresencaProduto` e `RegraDcc`; não comprovam sozinhas os dois casos comerciais exigidos. |
-| [x] | Cinco testes automatizados versionados | `src/test/java/lp2/processamento/ProcessamentoPlanilhasTest.java`: resumos, substituição/consolidação, formatação, números e contrato numérico. Resultado da execução não verificado nesta revisão. |
+| [x] | Testes automatizados de usuários e processamento | `UsuarioTest`: 14 testes; `ProcessamentoPlanilhasTest`: 5 testes. Maven executado em 14/11/2026: 19 testes, sem falhas, erros ou testes ignorados. |
 | [x] | Especificação comercial e requisitos acadêmicos documentados | RN01–RN18, RF01–RF20 e critérios acadêmicos nos documentos vinculados acima; propostas ainda exigem decisões da equipe. |
 | [~] | Catálogo de produtos | `CatalogoProdutos.java` lê `dados/catalogo_produtos.xlsx`, aba `CATALOGO`, e permite seleção em memória. Falta CRUD, entidades, persistência e integração ao `Main`. |
-| [~] | Autenticação e autorização | Apenas `Vendedor` concreto e consultas de permissão; sem autenticação, Apoio, Administrador ou proteção dos serviços. |
+| [~] | Autenticação e autorização | Três perfis concretos e consultas de capacidade, com inatividade e impedimento de autoaprovação por ID. Autenticação e autorização por escopo nos serviços continuam pendentes. |
 | [~] | UML e planejamento da persistência | Diagramas e `ESTRUTURA_DADOS.md` existem, mas seguem principalmente o modelo antigo. Não há carga/gravação de entidades em `BASE_GERAL.xlsx`. |
 | [~] | Documentação de execução e status | README e diagnóstico ainda citam caminhos antigos, ausência de testes/Maven na raiz e processamento separado; precisam ser sincronizados. |
 | [ ] | Núcleo comercial completo | Categorias/unidades dinâmicas, clientes, vendas/itens, contrato opcional, comissões, solicitações, histórico e recuperação ao iniciar ainda pendentes. |
@@ -50,10 +50,10 @@ Referência: [Requisitos da atividade — Unidade 03](../requisitos/REQUISITOS_A
 
 | Classe planejada | Responsabilidade | Situação atual |
 |---|---|---|
-| `Usuario` | Dados comuns: ID, nome, login, hash da senha e situação; contrato das permissões. | Já existe; revisar e completar. |
-| `Vendedor` | Matrícula e comportamento de vendedor; acesso às próprias operações. | Já existe; completar autorização por escopo. |
-| `Apoio` | Revisão de solicitações e operações de apoio autorizadas. | Criar. |
-| `Administrador` | Gestão de usuários, catálogo e acesso administrativo. | Criar. |
+| `Usuario` | Dados comuns: ID, nome, login, hash da senha e situação; contrato das capacidades e impedimento de autoaprovação. | P0-01 concluída; serviços de autorização ainda pendentes. |
+| `Vendedor` | Matrícula; pode solicitar quando ativo e não pode aprovar ou gerenciar. | P0-01 concluída; autorização por escopo pendente. |
+| `Apoio` | Capacidade de revisar alterações de outro usuário quando ativo, sem gestão administrativa. | Implementada e testada na P0-01; execução de operações e escopo pendentes. |
+| `Administrador` | Capacidade de revisar alterações de outro usuário e gerenciar usuários/catálogo quando ativo. | Implementada e testada na P0-01; serviços administrativos pendentes. |
 | `RepositorioUsuariosExcel` | Ler/gravar usuários e reconstruir a subclasse correta a partir do perfil salvo. | Criar. |
 | `ServicoUsuarios` | Cadastro, login único, alterações e ativação/desativação com autorização. | Criar. |
 | `ServicoAutenticacao` | Conferir senha, bloquear usuário inativo e manter a identidade da sessão. | Criar. |
@@ -93,7 +93,7 @@ Planejar a aba **`USUARIOS` em `dados/BASE_GERAL.xlsx`**, reaproveitando o arqui
 
 | ID | Estado | Entrega e critério de conclusão | Depende de |
 |---|:---:|---|---|
-| P0-01 | [~] | Revisar `Usuario`/`Vendedor` e criar `Apoio`/`Administrador`, com atributos ou comportamentos próprios. Demonstrar permissões distintas usando uma referência `Usuario`. | — |
+| P0-01 | [x] | `Usuario`/`Vendedor` revisados; `Apoio`/`Administrador` implementados; despacho polimórfico demonstrado no `Main` e em testes. [Evidência e limites](P0-01_USUARIOS.md): 19 testes aprovados e menu verificado. | — |
 | P0-02 | [ ] | Implementar autorização por perfil e escopo nos serviços, seguindo a matriz acima. Bloquear usuário inativo e operações não permitidas. | P0-01 |
 | P0-03 | [ ] | Implementar `RepositorioUsuariosExcel` e a aba `USUARIOS`: carregar ao iniciar, cadastrar/alterar sem perder registros, manter IDs e reconstruir perfis. Tratar planilha inválida, backup e falha de escrita sem corromper o arquivo. | P0-01 |
 | P0-04 | [ ] | Implementar cadastro e manutenção autorizados: validar campos/login único, gerar hash de senha e salvar ativação/desativação. Definir criação inicial do administrador apenas na primeira execução, sem senha fixa no código. | P0-02, P0-03 |

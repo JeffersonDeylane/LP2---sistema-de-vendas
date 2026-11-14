@@ -29,13 +29,23 @@ public class Main {
         System.out.println("Login: " + vendedor.getLogin());
         System.out.println("Matrícula: " + vendedor.getMatricula());
 
-        System.out.println(
-            "Pode aprovar: " + vendedor.podeAprovarAlteracoes()
-        );
+        Usuario[] usuarios = {
+            vendedor,
+            new Apoio(2, "Ana Souza", "ana.souza", "hash-ficticio-apoio", true),
+            new Administrador(3, "Maria Lima", "maria.lima", "hash-ficticio-adm", true)
+        };
 
-        System.out.println(
-            "Pode solicitar: " + vendedor.podeSolicitarAlteracao()
-        );
+        System.out.println("\nDemonstração de capacidades dos perfis (sem autenticação):");
+        for (Usuario usuario : usuarios) {
+            System.out.println("Usuário: " + usuario.getNome());
+            System.out.println("Pode solicitar: " + usuario.podeSolicitarAlteracao());
+            System.out.println("Pode aprovar alteração de João: "
+                + usuario.podeAprovarAlteracoes(vendedor));
+            System.out.println("Pode aprovar alteração própria: "
+                + usuario.podeAprovarAlteracoes(usuario));
+            System.out.println("Pode gerenciar usuários: " + usuario.podeGerenciarUsuarios());
+            System.out.println("Pode gerenciar catálogo: " + usuario.podeGerenciarCatalogo());
+        }
 
         // Testar a validação de matrícula
         try {

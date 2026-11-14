@@ -28,17 +28,13 @@ public class Vendedor extends Usuario {
     }
 
     
+    @Override
     public boolean podeAprovarAlteracoes() {
         return false;
     }
    
+    @Override
     public boolean podeGerenciarUsuarios() {
         return false;
     }
-
-
-    public boolean podeSolicitarAlteracao() {
-        return isAtivo();
-    }// POLIMORFISMO: somente vendedores ativos podem solicitar alterações. A autorização definitiva também deverá verificar a venda e quem é seu responsável.
-
 }

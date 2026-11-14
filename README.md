@@ -3,6 +3,19 @@
 usando o maven por causa do tratamento de planilha da transpiração.
 # Sistema de Gestão Comercial Flexível
 
+## Atualização P0-01 — 14/11/2026
+
+`Usuario` agora possui as especializações `Vendedor`, `Apoio` e `Administrador`.
+O `Main` demonstra suas capacidades distintas por referências `Usuario`, incluindo
+o bloqueio de autoaprovação por ID. Essas consultas ainda dependem dos futuros
+serviços de autenticação e autorização por escopo.
+
+O build atual usa o `pom.xml` da raiz: `mvn test`. Foram executados **19 testes,
+sem falhas ou erros** (14 de usuários e 5 de processamento), além da demonstração
+do menu com as opções 2 e 0. Consulte as [decisões, comandos e limites da entrega](docs/planejamento/P0-01_USUARIOS.md).
+As seções abaixo preservam a revisão histórica de 08/11/2026; suas referências a
+build aninhado, ausência de testes e perfis incompletos estão desatualizadas.
+
 Projeto de Linguagem de Programação II em Java, em evolução para uma plataforma de gestão comercial de produtos e serviços de diferentes segmentos.
 
 A proposta é reunir catálogo configurável, vendas com múltiplos itens, contratos opcionais, comissões, usuários, solicitações e histórico. O público-alvo são vendedores, equipes de apoio e administradores que precisam preservar condições comerciais e revisar divergências de fontes externas.
