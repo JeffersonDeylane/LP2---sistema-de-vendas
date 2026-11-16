@@ -1,3 +1,28 @@
+## Login local simples — 16/11/2026
+
+Execute na raiz pelo PowerShell:
+
+```powershell
+& ".\FERRAMENTAS\apache-maven-3.10.0\bin\mvn.cmd" compile exec:java "-Dexec.mainClass=Main"
+```
+
+Use **4** para cadastrar um vendedor (nome, login, senha e matrícula), **1**
+para entrar, **5** para sair da conta e **0** para encerrar. A opção **3** exige
+login. As contas são recuperadas de `dados/BASE_GERAL.xlsx`, aba `USUARIOS`;
+o primeiro cadastro cria o arquivo. Senhas são armazenadas com PBKDF2 e salt,
+reutilizando a persistência e o backup existentes. O cadastro é aberto nesta
+versão, sem autorização por perfil, e a senha fica visível ao digitar no terminal.
+Hashes fictícios antigos não autenticam; cadastre uma conta nova pelo menu.
+
+Validação desta entrega: compilação com JDK 21 para Java 17 e **82 testes
+aprovados**, executados diretamente pelo JUnit 4.13.2 com as dependências
+locais nas versões do projeto. Inclui os quatro novos testes de autenticação.
+Os artefatos da validação ficam em `target/`, ignorado pelo Git.
+
+Veja [EXPLICACAO_LOGIN.txt](EXPLICACAO_LOGIN.txt) para detalhes das mudanças,
+do código reaproveitado do Marcone e dos limites. As descrições históricas abaixo
+que apontam login pendente ou usuários fixos no menu foram superadas por esta entrega.
+
 #rodar main:
  & ".\FERRAMENTAS\apache-maven-3.10.0\bin\mvn.cmd" exec:java "-Dexec.mainClass=Main"
 usando o maven por causa do tratamento de planilha da transpiração.

@@ -1,0 +1,27 @@
+
+
+- src/main/java/Senhas.java: usa PBKDF2WithHmacSHA256, com 600.000 iterações,
+  salt aleatório de 16 bytes e hash de 256 bits.
+- src/main/java/ServicoAutenticacao.java: coordena cadastro e autenticação,
+  consultando o repositório existente.
+- src/test/java/ServicoAutenticacaoTest.java: cobre recuperação após reabrir,
+  hash com salt, senha incorreta, hash inválido, conta inativa, login duplicado,
+  senha vazia e interação com o menu, incluindo login e logout.
+
+Usei as classes que estavam lá
+
+- PersistenciaUsuariosException: falhas de leitura/gravação são apresentadas
+  ao usuário. Nenhuma confirmação de cadastro é emitida se a gravação falhar.
+- Hierarquia Usuario/Vendedor/Apoio/Administrador e métodos de estado.
+- Esquema existente da aba USUARIOS: ID, NOME, LOGIN, SENHA_HASH, PERFIL,
+  ATIVO e MATRICULA.
+
+
+Arquivo padrão: dados/BASE_GERAL.xlsx, aba USUARIOS.
+
+COMO EXECUTAR (POWERSHELL, NA RAIZ DO PROJETO)
+
+& ".\FERRAMENTAS\apache-maven-3.10.0\bin\mvn.cmd" compile exec:java "-Dexec.mainClass=Main"
+
+
+
