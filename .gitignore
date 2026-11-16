@@ -5,6 +5,9 @@
 *.db
 *.sqlite
 *.sqlite3
+/dados/BASE_GERAL.xlsx
+/dados/BASE_GERAL.xlsx.bak
+/dados/.BASE_GERAL.xlsx-*.tmp
 !dados/**/.gitkeep
 
 # Ambiente Java (futuro)

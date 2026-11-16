@@ -72,8 +72,22 @@ public abstract class Usuario {
         this.ativo = false;
     }
 
-    // Métodos abstratos: implementados pelas subclasses
+    // Consultas de capacidade; os serviços ainda devem validar autenticação e escopo.
+    public boolean podeSolicitarAlteracao() {
+        return isAtivo();
+    }
+
     public abstract boolean podeAprovarAlteracoes();
 
+    public final boolean podeAprovarAlteracoes(Usuario solicitante) {
+        return solicitante != null
+            && id != solicitante.getId()
+            && podeAprovarAlteracoes();
+    }
+
     public abstract boolean podeGerenciarUsuarios();
+
+    public boolean podeGerenciarCatalogo() {
+        return false;
+    }
 }
