@@ -98,7 +98,7 @@ A aba **`USUARIOS` em `dados/BASE_GERAL.xlsx`** foi implementada na P0-03. A bas
 | P0-02 | [ ] | Implementar autorização por perfil e escopo nos serviços, seguindo a matriz acima. Bloquear usuário inativo e operações não permitidas. | P0-01 |
 | P0-03 | [x] | `RepositorioUsuariosExcel` implementado e integrado à carga inicial. IDs e perfis preservados, atualização por ID, validação estrita, backup e troca atômica. [Evidência e limites](P0-03_PERSISTENCIA_USUARIOS.md): 35 testes novos e suíte completa com 54 aprovados. | P0-01 |
 | P0-04 | [ ] | Implementar cadastro e manutenção autorizados: validar campos/login único, gerar hash de senha e salvar ativação/desativação. Definir criação inicial do administrador apenas na primeira execução, sem senha fixa no código. | P0-02, P0-03 |
-| P0-05 | [ ] | Implementar login/logout: verificar senha, bloquear conta inativa, manter usuário autenticado e limpar sessão ao sair. Remover o vendedor fixo como identidade de uso. | P0-04 |
+| P0-05 | [~] | Implementar login/logout: verificar senha, bloquear conta inativa, manter usuário autenticado e limpar sessão ao sair. Remover o vendedor fixo como identidade de uso. | P0-04 |
 | P0-06 | [ ] | Validar com usuários fictícios dos três perfis: cadastrar, fechar/reabrir, autenticar e confirmar bloqueios; testar login duplicado, senha incorreta e falha ao salvar. Conferir exclusão de dados reais/credenciais do versionamento. | P0-05 |
 | P0-07 | [ ] | Registrar esquema da aba em `ESTRUTURA_DADOS.md`, decisões de acesso em `DECISOES_E_PENDENCIAS.md` e classes no UML. Evidenciar a primeira entrega funcionando. | P0-06 |
 ## 4. P1 — Base funcional: fazer em seguida

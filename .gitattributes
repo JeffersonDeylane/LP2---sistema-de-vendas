@@ -1,0 +1,3 @@
+# Preserve Unix line endings for the Linux launcher and bundled Maven script.
+/executar.sh text eol=lf
+/FERRAMENTAS/apache-maven-3.10.0/bin/mvn text eol=lf
