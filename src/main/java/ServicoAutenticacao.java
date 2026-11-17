@@ -1,7 +1,8 @@
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-/** Cadastro local de vendedores e autenticação, sem gestão de permissões. */
+/** Cadastro local de usuários e autenticação. */
 public final class ServicoAutenticacao {
     private final RepositorioUsuariosExcel repositorio;
 
@@ -9,16 +10,33 @@ public final class ServicoAutenticacao {
         this.repositorio = Objects.requireNonNull(repositorio);
     }
 
-    public Vendedor cadastrar(String nome, String login, String senha, String matricula) {
+    public Usuario cadastrar(Usuario solicitante, String perfil, String nome,
+                            String login, String senha, String matricula) {
+        if (solicitante == null || !solicitante.isAtivo() || !solicitante.podeGerenciarUsuarios()) {
+            throw new IllegalArgumentException("Apenas um administrador ativo pode cadastrar usuários.");
+        }
         String loginValidado = Validador.textoObrigatorio(login, "Login");
         List<Usuario> usuarios = repositorio.listar();
         if (usuarios.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(loginValidado))) {
             throw new IllegalArgumentException("Este login já está cadastrado.");
         }
-        Vendedor vendedor = new Vendedor(repositorio.proximoId(), nome, loginValidado,
-            Senhas.gerarHash(senha), true, matricula);
-        repositorio.salvar(vendedor);
-        return vendedor;
+        String perfilValidado = Validador.textoObrigatorio(perfil, "Perfil").toUpperCase(Locale.ROOT);
+        String hash = Senhas.gerarHash(senha);
+        Usuario novoUsuario = switch (perfilValidado) {
+            case "VENDEDOR" -> new Vendedor(repositorio.proximoId(), nome, loginValidado,
+                hash, true, matricula);
+            case "APOIO" -> {
+                exigirMatriculaVazia(matricula);
+                yield new Apoio(repositorio.proximoId(), nome, loginValidado, hash, true);
+            }
+            case "ADMINISTRADOR" -> {
+                exigirMatriculaVazia(matricula);
+                yield new Administrador(repositorio.proximoId(), nome, loginValidado, hash, true);
+            }
+            default -> throw new IllegalArgumentException("Perfil inválido.");
+        };
+        repositorio.salvar(novoUsuario);
+        return novoUsuario;
     }
 
     public Usuario autenticar(String login, String senha) {
@@ -31,5 +49,11 @@ public final class ServicoAutenticacao {
             throw new IllegalArgumentException("Login ou senha inválidos.");
         }
         return usuario;
+    }
+
+    private void exigirMatriculaVazia(String matricula) {
+        if (matricula != null && !matricula.isBlank()) {
+            throw new IllegalArgumentException("Matrícula só se aplica ao perfil vendedor.");
+        }
     }
 }

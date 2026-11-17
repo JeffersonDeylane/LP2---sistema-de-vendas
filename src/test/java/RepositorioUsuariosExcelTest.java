@@ -623,10 +623,11 @@ public class RepositorioUsuariosExcelTest {
     }
 
     @Test
-    public void inicializacaoSemBaseNaoCriaUsuariosFixos() throws Exception {
+    public void inicializacaoSemBaseNaoCriaUsuariosAutomaticamente() throws Exception {
         String saida = executarMain();
         assertTrue(saida.contains("Usuários persistidos carregados: 0"));
         assertTrue(saida.contains("Encerrando o sistema"));
+        assertFalse(saida.contains("Admin inicial criado"));
         assertFalse(Files.exists(arquivo));
     }
 

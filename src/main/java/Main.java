@@ -9,13 +9,13 @@ public class Main {
         RepositorioUsuariosExcel repositorio = args.length == 0
             ? new RepositorioUsuariosExcel()
             : new RepositorioUsuariosExcel(Path.of(args[0]));
+        ServicoAutenticacao autenticacao = new ServicoAutenticacao(repositorio);
         try {
             System.out.println("Usuários persistidos carregados: " + repositorio.listar().size());
         } catch (PersistenciaUsuariosException e) {
             System.err.println("Falha ao carregar usuários: " + e.getMessage());
             return;
         }
-        ServicoAutenticacao autenticacao = new ServicoAutenticacao(repositorio);
         Usuario usuarioAutenticado = null;
         Scanner scanner = new Scanner(System.in);
         boolean executando = true;
@@ -27,7 +27,9 @@ public class Main {
             System.out.println("1 - Login");
             System.out.println("2 - Sobre o sistema");
             System.out.println("3 - Tratamento de planilha");
-            System.out.println("4 - Cadastrar vendedor");
+            if (usuarioAutenticado != null && usuarioAutenticado.podeGerenciarUsuarios()) {
+                System.out.println("4 - Cadastrar usuário");
+            }
             System.out.println("5 - Sair da conta");
             System.out.println("0 - Sair");
             if (usuarioAutenticado != null) {
@@ -71,11 +73,25 @@ public class Main {
                         resultado.getAvisos().forEach(aviso -> System.out.println("Aviso: " + aviso));
                         break;
                     case "4":
+                        if (usuarioAutenticado == null || !usuarioAutenticado.podeGerenciarUsuarios()) {
+                            System.out.println("Apenas um administrador pode cadastrar usuários.");
+                            break;
+                        }
+                        System.out.println("Perfil: 1 - Vendedor, 2 - Apoio, 3 - Administrador");
+                        String opcaoPerfil = lerCampo(scanner, "Escolha o perfil: ").trim();
+                        String perfil = switch (opcaoPerfil) {
+                            case "1" -> "VENDEDOR";
+                            case "2" -> "APOIO";
+                            case "3" -> "ADMINISTRADOR";
+                            default -> throw new IllegalArgumentException("Perfil inválido.");
+                        };
                         String nome = lerCampo(scanner, "Nome: ");
                         String novoLogin = lerCampo(scanner, "Login: ");
                         String novaSenha = lerCampo(scanner, "Senha: ");
-                        String matricula = lerCampo(scanner, "Matrícula: ");
-                        autenticacao.cadastrar(nome, novoLogin, novaSenha, matricula);
+                        String matricula = perfil.equals("VENDEDOR")
+                            ? lerCampo(scanner, "Matrícula: ") : "";
+                        autenticacao.cadastrar(usuarioAutenticado, perfil,
+                            nome, novoLogin, novaSenha, matricula);
                         System.out.println("Cadastro salvo! Use a opção 1 para entrar.");
                         break;
                     case "5":

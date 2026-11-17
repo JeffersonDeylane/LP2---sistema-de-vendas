@@ -22,7 +22,7 @@ Referência: [Requisitos da atividade — Unidade 03](../requisitos/REQUISITOS_A
 | [x] | Testes automatizados de usuários, persistência e processamento | `UsuarioTest`: 14; `RepositorioUsuariosExcelTest`: 35; `ProcessamentoPlanilhasTest`: 5. Maven executado em 14/11/2026: 54 testes, sem falhas, erros ou ignorados. |
 | [x] | Especificação comercial e requisitos acadêmicos documentados | RN01–RN18, RF01–RF20 e critérios acadêmicos nos documentos vinculados acima; propostas ainda exigem decisões da equipe. |
 | [~] | Catálogo de produtos | `CatalogoProdutos.java` lê `dados/catalogo_produtos.xlsx`, aba `CATALOGO`, e permite seleção em memória. Falta CRUD, entidades, persistência e integração ao `Main`. |
-| [~] | Autenticação e autorização | Três perfis concretos e consultas de capacidade, com inatividade e impedimento de autoaprovação por ID. Autenticação e autorização por escopo nos serviços continuam pendentes. |
+| [~] | Autenticação e autorização | Três perfis concretos, login/logout, admin padrão salvo na aba `USUARIOS` da base local e cadastro dos três perfis somente por administrador ativo. O programa não cria contas automaticamente; autorização das operações comerciais e por escopo continua pendente. |
 | [x] | Persistência dos usuários | `RepositorioUsuariosExcel`, aba `USUARIOS`, carga inicial, atualização por ID, backup e troca atômica. [Entrega P0-03](P0-03_PERSISTENCIA_USUARIOS.md). |
 | [~] | UML e planejamento da persistência comercial | Esquema de usuários implementado em `ESTRUTURA_DADOS.md`; demais abas e diagramas comerciais continuam planejados. |
 | [~] | Documentação de execução e status | README e diagnóstico ainda citam caminhos antigos, ausência de testes/Maven na raiz e processamento separado; precisam ser sincronizados. |
@@ -95,11 +95,11 @@ A aba **`USUARIOS` em `dados/BASE_GERAL.xlsx`** foi implementada na P0-03. A bas
 | ID | Estado | Entrega e critério de conclusão | Depende de |
 |---|:---:|---|---|
 | P0-01 | [x] | `Usuario`/`Vendedor` revisados; `Apoio`/`Administrador` implementados; despacho polimórfico demonstrado no `Main` e em testes. [Evidência e limites](P0-01_USUARIOS.md): 19 testes aprovados e menu verificado. | — |
-| P0-02 | [ ] | Implementar autorização por perfil e escopo nos serviços, seguindo a matriz acima. Bloquear usuário inativo e operações não permitidas. | P0-01 |
+| P0-02 | [~] | Cadastro de usuários exige administrador ativo no serviço e no menu. Implementar autorização por perfil e escopo nas demais operações, seguindo a matriz acima. Bloquear usuário inativo e operações não permitidas. | P0-01 |
 | P0-03 | [x] | `RepositorioUsuariosExcel` implementado e integrado à carga inicial. IDs e perfis preservados, atualização por ID, validação estrita, backup e troca atômica. [Evidência e limites](P0-03_PERSISTENCIA_USUARIOS.md): 35 testes novos e suíte completa com 54 aprovados. | P0-01 |
-| P0-04 | [ ] | Implementar cadastro e manutenção autorizados: validar campos/login único, gerar hash de senha e salvar ativação/desativação. Definir criação inicial do administrador apenas na primeira execução, sem senha fixa no código. | P0-02, P0-03 |
-| P0-05 | [~] | Implementar login/logout: verificar senha, bloquear conta inativa, manter usuário autenticado e limpar sessão ao sair. Remover o vendedor fixo como identidade de uso. | P0-04 |
-| P0-06 | [ ] | Validar com usuários fictícios dos três perfis: cadastrar, fechar/reabrir, autenticar e confirmar bloqueios; testar login duplicado, senha incorreta e falha ao salvar. Conferir exclusão de dados reais/credenciais do versionamento. | P0-05 |
+| P0-04 | [~] | Cadastro autorizado dos três perfis implementado: valida campos/login único, gera hash e salva. Admin padrão `admin`/`admin` fica registrado na base local; não há criação automática no código. Falta manutenção de usuários (edição/ativação/desativação). Trocar a senha padrão antes de usar dados reais. | P0-02, P0-03 |
+| P0-05 | [x] | Login/logout implementados: verificar senha, bloquear conta inativa, manter usuário autenticado e limpar sessão ao sair. A opção de cadastro só aparece para administrador; o serviço também valida a permissão. | P0-04 |
+| P0-06 | [~] | Suíte completa: 84 testes aprovados. Testes cobrem os três perfis, persistência/reabertura, login, senha incorreta, conta inativa, login duplicado e bloqueio de cadastro sem administrador. Conferir dados/credenciais versionados na revisão final. | P0-05 |
 | P0-07 | [ ] | Registrar esquema da aba em `ESTRUTURA_DADOS.md`, decisões de acesso em `DECISOES_E_PENDENCIAS.md` e classes no UML. Evidenciar a primeira entrega funcionando. | P0-06 |
 ## 4. P1 — Base funcional: fazer em seguida
 

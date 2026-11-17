@@ -1,14 +1,15 @@
 # Dados reais e saídas locais
 //mandando os dados xlsx por enquanto
-*.xls
-*.csv
+*.bak
+#*.csv
 *.db
 *.sqlite
 *.sqlite3
-/dados/BASE_GERAL.xlsx
-/dados/BASE_GERAL.xlsx.bak
-/dados/.BASE_GERAL.xlsx-*.tmp
-!dados/**/.gitkeep
+
+#/dados/BASE_GERAL.xlsx
+#/dados/BASE_GERAL.xlsx.bak
+#/dados/.BASE_GERAL.xlsx-*.tmp
+#!dados/**/.gitkeep
 
 # Ambiente Java (futuro)
 FERRAMENTAS/
