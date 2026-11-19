@@ -64,9 +64,10 @@ Comissão comercial só fica elegível quando instalada; cadastrada, agendada ou
 
 **Estado no código:** NÃO IMPLEMENTADA. `GeradorRelatorios` gera resumos, mas não controla estados de elegibilidade ou pagamento de comissão.
 
-## RN11 — Cancelamento e reativação em cascata
+## RN11 — reativação em cascata
 
-Cancelar VIRTUA afeta todos os demais itens ainda não cancelados do contrato. Cancelar TV afeta TV e os itens ativos, exceto VIRTUA. CHIP e FONE afetam apenas o próprio item; Mesh também, sujeito a confirmação da equipe. Cada ação registra um grupo com somente os itens efetivamente alterados. Reativar a origem restaura somente os itens daquele grupo para CADASTRADA. Apoio/ADM executa; alterações concorrentes posteriores não devem ser desfeitas.
+Reativar a origem do produto restaura somente os itens daquele grupo para CADASTRADA. Apoio/ADM executa; alterações concorrentes posteriores não devem ser desfeitas.
+Somente a raiz altera os outros produtos.
 
 **Estado no código:** NÃO IMPLEMENTADA. Não há métodos de cancelamento, grupos de operação ou reativação de itens.
 
