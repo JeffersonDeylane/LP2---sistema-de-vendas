@@ -1,3 +1,35 @@
+## Atualização P1 — Cadastro de vendas — 22/11/2026
+
+O perfil `Vendedor` já existente agora pode cadastrar clientes e registrar suas
+próprias vendas. Um administrador cadastra produtos; vendedor ou administrador
+pode cadastrar contratos vinculados a um cliente. A venda aceita vários itens,
+com contrato opcional, é salva como rascunho e só passa a confirmada após ação
+explícita. O serviço revalida o usuário ativo persistido, o vínculo do contrato e
+o escopo do vendedor; o menu não é a única barreira de autorização.
+
+Para usar o fluxo, entre com uma conta existente e ativa:
+
+1. Como administrador, use **7** para cadastrar ao menos um produto.
+2. Como vendedor ou administrador, use **6** para cadastrar o cliente e, se
+   necessário, **8** para associar um contrato ao cliente.
+3. Use **9** para montar uma venda com um ou mais itens. Deixe o contrato em
+   branco para uma venda avulsa.
+4. Use **10** para confirmar a venda e **11** para consultar as vendas visíveis
+   ao perfil.
+
+As abas `CLIENTES`, `PRODUTOS`, `CONTRATOS`, `VENDAS` e `ITENS_VENDA` são
+persistidas no mesmo `dados/BASE_GERAL.xlsx` da aba `USUARIOS`, com backup e
+gravação atômica. Consulte o [esquema e as limitações](docs/planejamento/ESTRUTURA_DADOS.md).
+
+**Limites desta entrega:** categoria e unidade são descrições de texto, sem
+cadastro próprio; não há edição/inativação pela interface, cancelamento,
+conclusão, auditoria completa, comissões ou solicitações de alteração. A
+fotografia ao confirmar preserva código/nome/categoria/unidade, quantidade,
+preço e subtotal, mas ainda não a permissão de fração ou uma política de
+comissão. Subtotais são arredondados por item com `HALF_UP` para duas casas.
+Apoio não opera vendas porque ainda não existe atribuição de escopo para esse
+perfil.
+
 ## Login local simples — 16/11/2026
 
 Execute na raiz pelo PowerShell:

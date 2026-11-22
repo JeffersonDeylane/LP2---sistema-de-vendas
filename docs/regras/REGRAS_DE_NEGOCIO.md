@@ -165,9 +165,16 @@ Nenhum perfil pode operar inativo, aprovar solicitação própria ou dispensar i
 - **NÃO IMPLEMENTADO:** não há implementação identificável.
 - **NÃO VERIFICÁVEL:** faltam evidências para classificar um comportamento existente.
 
-As 18 regras seguintes estão definidas para o produto. Na inspeção de 08/11/2026: **0 implementadas, 1 parcial (RN08), 17 não implementadas e 0 classificadas como não verificáveis por inspeção**. A execução completa não foi comprovada. Os quatro comportamentos comerciais da integração legada são separados no status técnico.
+As 18 regras seguintes estão definidas para o produto. A contagem de 08/11/2026
+é histórica; em 22/11/2026, RN03–RN08 e RN10 foram reavaliadas após o cadastro
+inicial de vendas. A entrega ainda não cobre todo o núcleo comercial nem prova
+execução sobre dados reais.
 
-Para tornar os cenários verificáveis, propõem-se unicidade por nome normalizado, precedência da política do produto, estados e arredondamento. Essas são decisões documentais a validar pela equipe, não exigências atribuídas ao professor nem funcionalidades existentes.
+Para tornar os cenários verificáveis, propõem-se unicidade por nome normalizado,
+precedência da política do produto, estados e arredondamento. A implementação
+inicial adota arredondamento `HALF_UP` por item a duas casas decimais. As decisões
+continuam sujeitas à validação da equipe; não são exigências atribuídas ao
+professor.
 
 ## 4. Regras comerciais
 
@@ -179,7 +186,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** categorias em enum; duplicidade pelo critério definido; excluir fisicamente categoria com produtos; usar categoria inativa em novo produto ou nova venda na proposta inicial.
 - **Classes envolvidas:** CategoriaProduto, Produto, Administrador, Usuario e RegistroHistorico; todas conceituais, exceto Usuario.
 - **Cenários de aceitação:** criar “Serviços” sem recompilar; rejeitar “ serviços ” já existente; desativar categoria e manter venda histórica consultável.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. `Produto` guarda categoria textual e o cadastro é restrito a administrador ativo. Faltam entidades/manutenção de categorias e validação de categoria ativa.
 
 ### RN02 — Tipos e unidades configuráveis com integridade de uso
 
@@ -189,7 +196,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** excluir unidade utilizada por produto ou histórico; excluir tipo com unidades associadas; converter quantidades silenciosamente; depender apenas das unidades de exemplo.
 - **Classes envolvidas:** TipoUnidadeMedida, UnidadeMedida, Produto, ItemVenda e Administrador; conceituais.
 - **Cenários de aceitação:** criar tipo “Embalagem” e unidade “Pacote”; bloquear exclusão de unidade usada; manter item antigo em kg após cadastrar unidade g.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. `Produto` guarda unidade textual opcional e permite fração configurável; não há entidades ou gestão de tipos/unidades.
 
 ### RN03 — Disponibilidade comercial de produtos
 
@@ -199,7 +206,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** vender produto inativo; excluir produto com histórico; exigir unidade para todo produto; impor nomes de telecomunicações como tipos obrigatórios do domínio.
 - **Classes envolvidas:** Produto, CategoriaProduto, UnidadeMedida, TipoUnidadeMedida, ItemVenda e Venda; conceituais.
 - **Cenários de aceitação:** cadastrar serviço sem unidade; rejeitar produto inativo em nova venda; manter produto desativado visível em venda antiga.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. Produtos possuem código único, preço positivo e situação; somente produtos ativos são oferecidos em novas vendas. Categoria e unidade ainda são texto, sem referências configuráveis.
 
 ### RN04 — Quantidade conforme a unidade comercial
 
@@ -209,7 +216,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** quantidade nula/negativa; quantidade 2 no mesmo item sem unidade; fração em unidade indivisível; alteração retroativa por reconfiguração da unidade.
 - **Classes envolvidas:** Produto, UnidadeMedida, ItemVenda e Venda; conceituais.
 - **Cenários de aceitação:** aceitar 1,5 kg com fração permitida; rejeitar 1,5 cx indivisível; aceitar duas linhas sem unidade, ambas com quantidade 1.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** IMPLEMENTADO no fluxo de vendas. Quantidade precisa ser positiva; sem unidade deve ser 1; unidade indivisível recusa frações. Regras cobertas por testes automatizados.
 
 ### RN05 — Cliente da venda e contrato opcional
 
@@ -219,7 +226,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** exigir contrato para toda venda; associar contrato de outro cliente; excluir fisicamente cliente com vendas ou contratos.
 - **Classes envolvidas:** Cliente, Venda, Contrato e RegistroHistorico; conceituais.
 - **Cenários de aceitação:** confirmar venda avulsa; rejeitar contrato alheio; consultar venda de cliente posteriormente inativado.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. Cliente é obrigatório e contrato opcional deve estar ativo e pertencer ao mesmo cliente. Não há edição/inativação pela interface nem histórico completo após inativação.
 
 ### RN06 — Confirmação e composição válida da venda
 
@@ -229,7 +236,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** confirmar venda vazia; contar item rejeitado como vendido; misturar comissão com preço do cliente; confundir número de itens com número de vendas.
 - **Classes envolvidas:** Venda, ItemVenda, Cliente, Produto e Vendedor; conceituais, exceto Vendedor.
 - **Cenários de aceitação:** recusar confirmação vazia; confirmar dois produtos e um serviço; apresentar total comercial separado das comissões.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** IMPLEMENTADO para registro e confirmação inicial. Venda é salva como rascunho, exige ao menos um item ativo válido para confirmar, calcula subtotais/totais e persiste atomicamente. Estados posteriores e itens rejeitados/cancelados não estão implementados.
 
 ### RN07 — Fotografia histórica das condições comerciais
 
@@ -239,7 +246,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** recalcular venda antiga pelo preço atual; substituir unidade histórica; editar condição confirmada sem revisão quando exigida.
 - **Classes envolvidas:** Produto, CategoriaProduto, UnidadeMedida, ItemVenda, SolicitacaoAlteracao e RegistroHistorico; conceituais.
 - **Cenários de aceitação:** mudar preço e manter venda anterior; alterar taxa e preservar comissão original; consultar antes/depois de correção aprovada.
-- **Status atual:** NÃO IMPLEMENTADO.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. A confirmação captura código, nome, categoria, unidade, quantidade, preço unitário e subtotal. Não fotografa a permissão de fração nem política/comissão, e não registra versões de correção ou histórico completo.
 
 ### RN08 — Autenticação, escopo e permissões por perfil
 
@@ -249,7 +256,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** usuário inativo operar; vendedor aprovar/gerenciar usuários; acessar venda alheia sem permissão; confiar somente no menu; ignorar invariantes por privilégio administrativo.
 - **Classes envolvidas:** Usuario e Vendedor existentes; Apoio, Administrador e serviços de autorização conceituais.
 - **Cenários de aceitação:** negar vendedor inativo; negar manutenção de unidades ao vendedor; permitir categoria ao administrador ativo; bloquear chamada direta não autorizada ao serviço.
-- **Status atual:** PARCIALMENTE IMPLEMENTADO. Vendedor nega aprovação/gestão e consulta isAtivo() para solicitação; faltam autenticação, outros perfis e operações protegidas.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. O serviço de vendas valida usuário ativo persistido, limita vendedor às próprias vendas e exige administrador para cadastrar produtos. Administrador consulta todas; faltam escopo de Apoio e outras operações comerciais protegidas.
 
 ### RN09 — Solicitações, revisão e decisão independente
 
@@ -269,7 +276,7 @@ Para tornar os cenários verificáveis, propõem-se unicidade por nome normaliza
 - **Comportamentos proibidos:** setter irrestrito de estado; concluir rascunho; pagar comissão não elegível; reabrir solicitação decidida; usar enum sem comportamento.
 - **Classes envolvidas:** Venda, ItemVenda, SolicitacaoAlteracao, Comissao e GrupoCancelamento; conceituais.
 - **Cenários de aceitação:** recusar RASCUNHO → CONCLUIDA; aceitar confirmação válida; preservar dados após tentativa inválida.
-- **Status atual:** NÃO IMPLEMENTADO. Usuario.ativo não representa o ciclo comercial.
+- **Status atual:** PARCIALMENTE IMPLEMENTADO. Venda permite somente RASCUNHO → CONFIRMADA e recusa confirmação repetida/sobrescrita de venda confirmada. Conclusão, cancelamento e estados de item ainda não existem.
 
 ### RN11 — Comissão percentual configurável e precisão monetária
 

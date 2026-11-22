@@ -69,16 +69,43 @@ cadastro. A P0-03 não gera ou verifica hashes, não reconhece algoritmos e não
 oferece criptografia do arquivo. Geração de hash com salt e parâmetros fica na
 P0-04; acesso ao arquivo e backup deve ser restrito pela instalação.
 
+## Abas comerciais — implementadas parcialmente na P1
+
+**Atualização:** 22/11/2026. `RepositorioVendasExcel` usa o mesmo arquivo
+informado ao `RepositorioUsuariosExcel`, normalmente
+`dados/BASE_GERAL.xlsx`. Cada aba usa cabeçalho estrito; gravações preservam as
+demais abas e reutilizam o backup e a substituição atômica de
+`PlanilhasIO.salvarComBackup`. IDs são positivos e sequenciais por entidade,
+calculados pelo maior ID persistido. O esquema não tem migração automática.
+
+| Aba | Colunas (ordem obrigatória) | Regras principais |
+|---|---|---|
+| `CLIENTES` | `ID` numérico, `IDENTIFICACAO` texto, `NOME` texto, `ATIVO` booleano | Identificação única sem distinguir caixa; cliente é obrigatório e deve estar ativo ao iniciar uma venda. |
+| `PRODUTOS` | `ID` numérico, `CODIGO` texto, `NOME` texto, `CATEGORIA` texto, `PRECO` decimal em texto, `UNIDADE` texto ou vazia, `PERMITE_FRACAO` booleano, `ATIVO` booleano | Código único sem distinguir caixa; preço positivo com até duas casas; somente administrador cadastra; sem unidade, quantidade é 1. |
+| `CONTRATOS` | `ID` numérico, `NUMERO` texto, `CLIENTE_ID` numérico, `ATIVO` booleano | Número único sem distinguir caixa; o contrato usado pela venda deve estar ativo e pertencer ao mesmo cliente. |
+| `VENDAS` | `ID`, `CLIENTE_ID`, `VENDEDOR_ID` numéricos; `CONTRATO_ID` numérico ou vazio; `CRIADA_EM`, `CONFIRMADA_EM` texto ISO; `ESTADO` texto; `TOTAL` decimal em texto | Venda registra seu responsável e cliente; contrato é opcional; estados atuais: `RASCUNHO` e `CONFIRMADA`. |
+| `ITENS_VENDA` | `ID`, `VENDA_ID`, `PRODUTO_ID` numéricos; `QUANTIDADE` decimal em texto; `CODIGO_PRODUTO`, `NOME_PRODUTO`, `CATEGORIA`, `UNIDADE`, `PRECO_UNITARIO`, `SUBTOTAL` textos | No rascunho, os campos de fotografia ficam vazios. Na confirmação, são capturadas as condições comerciais vigentes do produto. |
+
+O vendedor consulta apenas as próprias vendas; o administrador consulta todas.
+A confirmação exige ao menos um item e valida produto/cliente ativos, contrato
+compatível e quantidade conforme unidade/fração. Preços são registrados com
+duas casas; cada subtotal é arredondado a duas casas com `HALF_UP`, e o total é
+a soma dos subtotais. Repetir a confirmação ou sobrescrever uma venda confirmada
+é recusado.
+
+Essas abas não implementam categorias/unidades como entidades, inativação pela
+interface, histórico completo de eventos, comissão, cancelamento, conclusão ou
+permissões de Apoio por atribuição. As datas são armazenadas em horário local
+ISO, sem fuso explícito. Usar um único processo escritor por vez; não há
+coordenação entre processos ou edição simultânea externa.
+
 ## Demais abas — planejamento legado
 
-As abas abaixo, exceto `USUARIOS`, continuam conceituais e não foram criadas por
-esta entrega. Prevalece a especificação comercial vigente sobre o esquema legado.
+As abas abaixo continuam conceituais e não foram criadas por esta entrega.
+Prevalece a especificação comercial vigente sobre o esquema legado.
 
 | Aba sugerida | Finalidade |
 |---|---|
-| `CONTRATOS` | Identificação do contrato, cliente e vendedor |
-| `ITENS_VENDA` | Produtos, quantidades, estados e comissões por item |
-| `USUARIOS` | Identidades e perfis (sem senhas em texto puro) |
 | `SOLICITACOES` | Propostas de alteração e estado da solicitação |
 | `DECISOES` | Aprovação ou recusa de campos |
 | `HISTORICO` | Autor, data, campo, valor antigo, novo e motivo |

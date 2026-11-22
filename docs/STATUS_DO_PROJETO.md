@@ -1,5 +1,26 @@
 # Status Atual e Diagnóstico Técnico do Projeto
 
+## Cadastro inicial de vendas — 22/11/2026
+
+Implementados `Cliente`, `Produto`, `Contrato`, `ItemVenda`, `Venda` e o fluxo
+`ServicoVendas`. Vendedor autenticado/ativo cadastra clientes e vendas próprias;
+administrador cadastra produtos e consulta vendas gerais. Contrato é opcional e
+validado contra o cliente. A venda aceita vários itens, permanece em rascunho
+até confirmação explícita, calcula total com `BigDecimal` e preserva fotografia
+de produto, unidade, quantidade e preço. Os dados ficam em abas comerciais no
+mesmo Excel de usuários, com backup e substituição atômica.
+
+O menu oferece cadastro de cliente/produto/contrato, registro em rascunho,
+confirmação e consulta de vendas. Foram executados **92 testes, sem falhas ou
+erros; 2 ignorados por plataforma**, em cópia isolada do projeto para não
+sobrescrever artefatos `target/` já modificados no worktree.
+
+Limites: categoria e unidade são textos, sem gestão própria; Apoio ainda não
+tem escopo de consulta; não há edição/inativação comercial pela interface,
+histórico completo, comissões, cancelamento ou conclusão. As seções seguintes
+são o diagnóstico histórico de 08/11/2026 e não devem ser lidas como estado
+atual.
+
 ## Atualização de usuários — 14/11/2026
 
 A P0-01 implementou Vendedor, Apoio e Administrador e suas capacidades

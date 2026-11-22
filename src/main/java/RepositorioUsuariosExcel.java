@@ -26,7 +26,7 @@ public final class RepositorioUsuariosExcel {
     private static final List<String> COLUNAS = List.of(
         "ID", "NOME", "LOGIN", "SENHA_HASH", "PERFIL", "ATIVO", "MATRICULA"
     );
-    private static final Object BLOQUEIO_ESCRITA = new Object();
+    static final Object BLOQUEIO_ESCRITA = new Object();
 
     private final Path arquivo;
     private volatile boolean baseConhecida;

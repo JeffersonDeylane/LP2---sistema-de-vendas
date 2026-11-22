@@ -2,7 +2,7 @@
 
 **Jefferson · Marcone · Faby**
 
-Atualização: **14/11/2026** · Prazo: **a definir** · Responsáveis: **a escolher**
+Atualização: **22/11/2026** · Prazo: **a definir** · Responsáveis: **a escolher**
 
 Marcação: `[ ]` pendente, `[~]` parcialmente feito, `[x]` concluído com evidência.
 
@@ -14,19 +14,19 @@ Referência: [Requisitos da atividade — Unidade 03](../requisitos/REQUISITOS_A
 |---|---|---|
 | [x] | Estrutura do repositório e documentação versionada | Código em `src/`, documentos em `docs/` e histórico Git local; equipe definida; envio ao GitHub ainda precisa ser confirmado. |
 | [x] | Configuração Java 17/Maven na raiz | `pom.xml` com Apache POI, Commons CSV e JUnit 4. |
-| [x] | Menu de terminal com processamento de planilhas integrado | `Main.java`, opção 3 chama `ProcessadorPlanilhas` e mostra arquivos/avisos. Login continua pendente. |
+| [x] | Menu de terminal com processamento de planilhas integrado | `Main.java`, opção 3 chama `ProcessadorPlanilhas`; login/logout estão implementados. |
 | [x] | Base de usuários e validações | `Usuario` abstrata, `Vendedor`, `Apoio`, `Administrador` e `Validador`; matrícula, ativação/desativação e capacidades polimórficas. [Entrega P0-01](P0-01_USUARIOS.md), com 14 testes de usuários aprovados. |
 | [x] | Leitura e tratamento especializado de XLS/XLSX/CSV | `PlanilhasIO`, `TratadorAnalitico`, `ComplementadorClaro` e `NormalizadorContrato`. Não cadastra vendas do domínio genérico. |
 | [x] | Cruzamentos, consolidação e relatórios especializados | `CruzadorContratos`, `ConsolidadorVendas` e `GeradorRelatorios`; resumos estáticos, não pivôs nativos do Excel. |
 | [x] | Estratégias polimórficas na integração | `RegraProduto`, `RegraPresencaProduto` e `RegraDcc`; não comprovam sozinhas os dois casos comerciais exigidos. |
-| [x] | Testes automatizados de usuários, persistência e processamento | `UsuarioTest`: 14; `RepositorioUsuariosExcelTest`: 35; `ProcessamentoPlanilhasTest`: 5. Maven executado em 14/11/2026: 54 testes, sem falhas, erros ou ignorados. |
+| [x] | Testes automatizados de usuários, persistência e processamento | Maven executado em cópia isolada em 22/11/2026: 92 testes, sem falhas/erros; 2 ignorados por plataforma. Inclui 8 testes de vendas. |
 | [x] | Especificação comercial e requisitos acadêmicos documentados | RN01–RN18, RF01–RF20 e critérios acadêmicos nos documentos vinculados acima; propostas ainda exigem decisões da equipe. |
-| [~] | Catálogo de produtos | `CatalogoProdutos.java` lê `dados/catalogo_produtos.xlsx`, aba `CATALOGO`, e permite seleção em memória. Falta CRUD, entidades, persistência e integração ao `Main`. |
-| [~] | Autenticação e autorização | Três perfis concretos, login/logout, admin padrão salvo na aba `USUARIOS` da base local e cadastro dos três perfis somente por administrador ativo. O programa não cria contas automaticamente; autorização das operações comerciais e por escopo continua pendente. |
+| [~] | Catálogo de produtos | `Produto` e aba `PRODUTOS` com código, preço, categoria/unidade em texto e restrição de cadastro a administrador. Categorias/unidades configuráveis e edição/inativação pela interface continuam pendentes. |
+| [~] | Autenticação e autorização | Login/logout e cadastro protegido de usuários existentes. `ServicoVendas` valida usuário persistido ativo, restringe produtos a administrador e vendas a vendedor/administrador, limitando consulta do vendedor às próprias vendas. Escopo de Apoio e outras operações ainda pendentes. |
 | [x] | Persistência dos usuários | `RepositorioUsuariosExcel`, aba `USUARIOS`, carga inicial, atualização por ID, backup e troca atômica. [Entrega P0-03](P0-03_PERSISTENCIA_USUARIOS.md). |
-| [~] | UML e planejamento da persistência comercial | Esquema de usuários implementado em `ESTRUTURA_DADOS.md`; demais abas e diagramas comerciais continuam planejados. |
-| [~] | Documentação de execução e status | README e diagnóstico ainda citam caminhos antigos, ausência de testes/Maven na raiz e processamento separado; precisam ser sincronizados. |
-| [ ] | Núcleo comercial completo | Categorias/unidades dinâmicas, clientes, vendas/itens, contrato opcional, comissões, solicitações, histórico e recuperação ao iniciar ainda pendentes. |
+| [~] | Persistência comercial e cadastro de vendas | Abas `CLIENTES`, `PRODUTOS`, `CONTRATOS`, `VENDAS` e `ITENS_VENDA` na mesma base, com backup atômico, rascunho, múltiplos itens, contrato opcional e fotografia de preço. Histórico completo, cancelamento e comissão pendentes. |
+| [~] | UML e documentação de execução | Esquema de usuários e vendas atualizado; UML e partes históricas do README/diagnóstico ainda precisam de sincronização. |
+| [~] | Núcleo comercial completo | Cadastro inicial de clientes, produtos, contratos e vendas implementado. Categorias/unidades dinâmicas, auditoria, comissões, solicitações, cancelamento e outras transições ainda pendentes. |
 
 ## 2. Equipe e combinados
 
@@ -103,17 +103,19 @@ A aba **`USUARIOS` em `dados/BASE_GERAL.xlsx`** foi implementada na P0-03. A bas
 | P0-07 | [ ] | Registrar esquema da aba em `ESTRUTURA_DADOS.md`, decisões de acesso em `DECISOES_E_PENDENCIAS.md` e classes no UML. Evidenciar a primeira entrega funcionando. | P0-06 |
 ## 4. P1 — Base funcional: fazer em seguida
 
-Depois da primeira entrega de usuários, avançar para o núcleo comercial. Definir IDs de venda/item, contrato opcional e esquema das novas abas antes de implementar a persistência dessas entidades. Confirmar as decisões comerciais pendentes e os critérios acadêmicos com a equipe.
+O primeiro fluxo de cadastro de vendas foi integrado. A próxima etapa é completar
+o domínio: categorias/unidades configuráveis, histórico e estados comerciais,
+mantendo as decisões de persistência e autorização já aplicadas.
 
 | ID | Estado | Entrega e critério de conclusão | Depende de |
 |---|:---:|---|---|
-| P1-01 | [ ] | Integrar a sessão e as permissões da primeira entrega às operações comerciais. Exigir usuário ativo, perfil e vínculo com a venda em cada serviço. | P0-06 |
-| P1-02 | [~] | Evoluir o leitor de catálogo para categorias, tipos/unidades e produtos configuráveis (RN01–RN04). CRUD, inativação, quantidade/fração e validações; integrar seleção ao fluxo comercial. | P0-02, P0-03 |
-| P1-03 | [ ] | Implementar clientes e contratos opcionais (RN05). Rejeitar contrato de outro cliente e preservar vínculos históricos após inativação. | P0-02, P0-03 |
-| P1-04 | [ ] | Ampliar a base Excel e seus repositórios para as entidades comerciais, preservando a aba de usuários, com leitura inicial, gravação segura, backup e bloqueio de escrita concorrente. Usar IDs acordados; cada bloco acrescenta seus mapeamentos. Validar salvamento e recuperação com amostra fictícia. | P0-03 |
+| P1-01 | [~] | Serviço de vendas exige usuário ativo persistido e perfil; vendedores só confirmam/consultam vendas próprias, administradores têm acesso geral. Escopo de Apoio continua pendente. | P0-06 |
+| P1-02 | [~] | `Produto` com preço, categoria/unidade textual, situação e regra de quantidade; administrador cadastra e venda seleciona produto ativo. Faltam entidades e CRUD dinâmico de categorias/unidades e manutenção de produtos. | P0-02, P0-03 |
+| P1-03 | [~] | Cliente obrigatório, contrato opcional e validação de contrato do mesmo cliente implementados. Inativação/manutenção de cadastro e preservação por histórico completo pendentes. | P0-02, P0-03 |
+| P1-04 | [~] | Novas abas comerciais usam `BASE_GERAL.xlsx`, preservam `USUARIOS` e demais abas e gravam com backup atômico; sem coordenação entre processos ou migração de esquema. | P0-03 |
 | P1-05 | [ ] | Implementar histórico persistente e sua integração às operações (RN18). Registrar autor, data, entidade, antes/depois e motivo; mudança e evento devem ser consistentes. | P1-01, P1-04 |
-| P1-06 | [ ] | Implementar vendas/itens, totais, fotografia histórica e transições controladas (RN06, RN07, RN10). Demonstrar venda avulsa, múltiplos itens, rejeição de venda vazia e transição inválida sem alteração parcial. | P1-01, P1-02, P1-03, P1-05 |
-| P1-07 | [~] | Integrar os fluxos concluídos ao terminal. Tratar entradas e exceções reais sem encerrar indevidamente a aplicação; remover a dependência dos exemplos fixos como fluxo de uso. | P1-01, P1-06 |
+| P1-06 | [~] | Cadastro em rascunho, venda avulsa/contrato opcional, múltiplos itens, rejeição de venda vazia, confirmação, total e fotografia de preço/unidade implementados e testados. Histórico de eventos, transições de item, cancelamento e conclusão continuam pendentes. | P1-01, P1-02, P1-03, P1-05 |
+| P1-07 | [~] | Cadastro de clientes/produtos/contratos, registro, confirmação e consulta integrados ao terminal com tratamento de erros. Edição dos cadastros e fluxos comerciais adicionais pendentes. | P1-01, P1-06 |
 
 ## 5. P2 — Regras comerciais e integração
 
