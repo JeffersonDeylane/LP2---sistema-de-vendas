@@ -259,7 +259,7 @@ PlanilhasIO salva saídas por temporário e tenta substituição atômica, com a
 
 ## 9. Pendências por área e ordem recomendada
 
-1. **Execução:** preparar JDK 17/Maven, validar comandos do README e tornar o build reproduzível; manter proteção contra perda das saídas existentes.
+1. **Execução:** preparar JDK 25/Maven, validar comandos do README e tornar o build reproduzível; manter proteção contra perda das saídas existentes.
 2. **Modelagem:** criar categorias, tipos/unidades, Produto, Cliente, Venda, ItemVenda e Contrato opcional; completar perfis, solicitações, comissões e histórico. Faltam ao menos oito classes elegíveis, não oito utilitários.
 3. **Regras:** validar decisões propostas da especificação; implementar RN01–RN18 com métodos de domínio e casos de aceitação, sem transformar telecomunicações em regra universal.
 4. **Funcionalidades:** decompor e integrar CRUD/fluxos completos para quinze operações, sendo sete adicionais; aproveitar relatórios e processamento sem contar etapas internas separadamente.

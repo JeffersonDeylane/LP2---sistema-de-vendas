@@ -25,8 +25,17 @@ public final class TratadorAnalitico {
             for (String c : List.of("VIRTUA", "CHIP", "PORT", "TV", "FONE", "DCC")) soma += TabelaDados.inteiro(linha.get(c));
             linha.put("SOMA", soma);
             String supervisor = TabelaDados.texto(linha.get("Supervisor")).toUpperCase(Locale.ROOT);
-            linha.put("Empresa", supervisor.equals("ZAIRO JUNIOR") || supervisor.equals("EDVALDO SANTOS") ? "PE" : empresa);
+            linha.put("Empresa", empresaDoSupervisor(supervisor, empresa));
         }
         return tabela;
+    }
+
+    private String empresaDoSupervisor(String supervisor, String empresaOriginal) {
+        // As condições mais abaixo no Python sobrescrevem as anteriores.
+        if (supervisor.contains("ANDERSON")) return "PE";
+        if (supervisor.contains("RAISSA")) return "PB";
+        if (supervisor.contains("PEDRO MELO")) return "AL";
+        if (supervisor.equals("ZAIRO JUNIOR") || supervisor.equals("EDVALDO SANTOS")) return "PE";
+        return empresaOriginal;
     }
 }

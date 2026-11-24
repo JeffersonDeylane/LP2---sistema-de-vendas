@@ -3,8 +3,31 @@ package lp2.processamento;
 import org.apache.poi.ss.usermodel.*;
 import java.util.*;
 
-/** Marca contratos exclusivos de cada fonte com fonte vermelha ou verde. */
+/** Compara os contratos das fontes e exporta a lista de contratos de TV do Analítico. */
 public final class CruzadorContratos {
+    public void listarTvAnalitico(Workbook wb, TabelaDados analitico) {
+        Sheet aba = encontrarAba(wb, "tv");
+        if (aba == null) return;
+
+        int coluna = 0;
+        for (Row linha : aba) coluna = Math.max(coluna, linha.getLastCellNum());
+        Row cabecalho = aba.getRow(0);
+        if (cabecalho == null) cabecalho = aba.createRow(0);
+        cabecalho.createCell(coluna).setCellValue("tv_analitico");
+
+        int indiceLinha = 1;
+        for (Map<String, Object> dados : analitico.linhas()) {
+            if (TabelaDados.numero(dados.get("TV")) != 1) continue;
+            String contrato = NormalizadorContrato.normalizar(dados.get("Contrato"));
+            if (contrato.isEmpty()) continue;
+
+            Row linha = aba.getRow(indiceLinha);
+            if (linha == null) linha = aba.createRow(indiceLinha);
+            linha.createCell(coluna).setCellValue(contrato);
+            indiceLinha++;
+        }
+    }
+
     public void cruzar(Workbook wb, TabelaDados analitico, String nomeAba, String flag, String colunaContrato, String colunaSaida) {
         Set<String> contratosAnalitico = new TreeSet<>();
         for (Map<String,Object> linha : analitico.linhas()) {
@@ -13,8 +36,7 @@ public final class CruzadorContratos {
                 if (!contrato.isEmpty()) contratosAnalitico.add(contrato);
             }
         }
-        Sheet aba = null;
-        for (Sheet candidata : wb) if (candidata.getSheetName().trim().equalsIgnoreCase(nomeAba)) aba = candidata;
+        Sheet aba = encontrarAba(wb, nomeAba);
         if (aba == null) { System.out.println("Aviso: aba não encontrada: " + nomeAba); return; }
         Row header = aba.getRow(0);
         if (header == null) return;
@@ -65,6 +87,13 @@ public final class CruzadorContratos {
         }
         aba.setColumnWidth(saidaIndex+1, 18*256);
         System.out.printf("Cruzamento %s: %d só no IMPERIUM, %d só no Analítico%n", nomeAba, contratosBase.stream().filter(c->!contratosAnalitico.contains(c)).count(), adicionados);
+    }
+
+    private Sheet encontrarAba(Workbook wb, String nomeAba) {
+        for (Sheet aba : wb) {
+            if (aba.getSheetName().trim().equalsIgnoreCase(nomeAba)) return aba;
+        }
+        return null;
     }
 
     private CellStyle estiloComFonte(Workbook wb, Cell celula, IndexedColors cor,

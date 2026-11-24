@@ -10,7 +10,7 @@ if errorlevel 1 (
 
 where java >nul 2>&1
 if errorlevel 1 (
-    echo Java nao encontrado. Configure um JDK 17 ou superior no PATH.
+    echo Java nao encontrado. Configure um JDK 21 ou superior no PATH.
     popd
     pause
     exit /b 1

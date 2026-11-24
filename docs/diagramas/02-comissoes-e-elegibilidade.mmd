@@ -5,15 +5,19 @@ classDiagram
         +calcular(OperacaoComercial) BigDecimal
     }
     class ComissaoPorPlano {
+        <<pendente>>
         +calcular(OperacaoComercial) BigDecimal
     }
     class ComissaoPorCombo {
+        <<pendente>>
         +calcular(OperacaoComercial) BigDecimal
     }
     class ComissaoPorQuantidade {
+        <<pendente>>
         +calcular(OperacaoComercial) BigDecimal
     }
     class ComissaoPorOperacao {
+        <<pendente>>
         +calcular(OperacaoComercial) BigDecimal
     }
     PoliticaComissao <|.. ComissaoPorPlano
@@ -26,20 +30,31 @@ classDiagram
         +podePagar(OperacaoComercial) boolean
     }
     class ElegibilidadeVenda {
+        <<pendente>>
         +podePagar(OperacaoComercial) boolean
     }
     class ElegibilidadeMudanca {
+        <<pendente>>
         +podePagar(OperacaoComercial) boolean
     }
     PoliticaElegibilidade <|.. ElegibilidadeVenda
     PoliticaElegibilidade <|.. ElegibilidadeMudanca
 
     class CalculadoraComissao {
+        <<pendente>>
         +calcular(OperacaoComercial) BigDecimal
     }
     class ApuradorComissoes {
+        <<pendente>>
         +apurar(List~OperacaoComercial~)
+    }
+    class ParametrizacaoComissao {
+        <<pendente>>
     }
     CalculadoraComissao --> PoliticaComissao
     ApuradorComissoes --> CalculadoraComissao
     ApuradorComissoes --> PoliticaElegibilidade
+
+    note for PoliticaComissao "Estruturas presentes; calculo ainda pendente."
+    note for PoliticaElegibilidade "Estruturas presentes; elegibilidade ainda pendente."
+    note for ApuradorComissoes "Esqueleto declarado; ainda nao integrado ao fluxo de vendas."

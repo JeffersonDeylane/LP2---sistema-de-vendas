@@ -9,7 +9,7 @@ if ! cd -- "$(dirname -- "${BASH_SOURCE[0]}")"; then
 fi
 
 if ! command -v java >/dev/null 2>&1; then
-    printf '%s\n' 'Java nao encontrado. Configure um JDK 17 ou superior no PATH.' >&2
+    printf '%s\n' 'Java nao encontrado. Configure um JDK 21 ou superior no PATH.' >&2
     exit 1
 fi
 

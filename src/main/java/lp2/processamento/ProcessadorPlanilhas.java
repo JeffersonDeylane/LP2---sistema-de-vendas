@@ -51,8 +51,8 @@ public final class ProcessadorPlanilhas {
                         PlanilhasIO.escreverTabela(wb, "Analítico", tabela, true);
                         if (Files.exists(config.baseClaro())) {
                             complementador.adicionar(wb, config.baseClaro(), empresa);
+                            cruzador.listarTvAnalitico(wb, tabela);
                             cruzador.cruzar(wb, tabela, "virtua", "VIRTUA", "NR_CONTRATO", "virtua_analitico");
-                            cruzador.cruzar(wb, tabela, "tv", "TV", "DT", "tv_analitico");
                             cruzador.cruzar(wb, tabela, "chip", "CHIP", "CONTRATO_NET", "chip_analitico");
                             cruzador.cruzar(wb, tabela, "tel fixo", "FONE", "NR_CONTRATO", "fone_analitico");
                         } else avisos.add("Base complementar ausente: " + config.baseClaro() + "; cruzamentos omitidos.");

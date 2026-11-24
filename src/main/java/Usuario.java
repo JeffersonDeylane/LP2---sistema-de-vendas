@@ -1,4 +1,5 @@
 
+/** Base abstrata dos perfis, com capacidades decididas polimorficamente pelas subclasses. */
 public abstract class Usuario {
 
     // Atributos

@@ -1,5 +1,20 @@
 
 classDiagram
+    class ServicoAutenticacao {
+        -RepositorioUsuariosExcel repositorio
+        +cadastrar(Usuario, String, String, String, String, String) Usuario
+        +autenticar(String, String) Usuario
+    }
+    class RepositorioUsuariosExcel {
+        -Path arquivo
+        +listar() List~Usuario~
+        +salvar(Usuario) void
+    }
+    class ServicoVendas
+    class ServicoUsuarios {
+        <<pendente>>
+    }
+
     class Usuario {
         <<abstract>>
         -int id
@@ -13,26 +28,40 @@ classDiagram
         +isAtivo() boolean
         +alterarNome(String) void
         +alterarLogin(String) void
+        +definirSenhaHash(String) void
         +ativar() void
         +desativar() void
+        +podeSolicitarAlteracao() boolean
         +podeAprovarAlteracoes() boolean
         +podeGerenciarUsuarios() boolean
+        +podeGerenciarCatalogo() boolean
     }
 
     class Vendedor {
+        -String matricula
         +podeAprovarAlteracoes() boolean
         +podeGerenciarUsuarios() boolean
     }
     class Apoio {
+        +aprovarSolicitacao() void
+        +recusarSolicitacao() void
+        +reativarVenda() void
         +podeAprovarAlteracoes() boolean
         +podeGerenciarUsuarios() boolean
     }
     class Administrador {
+        +gerenciarUsuarios() void
+        +gerarRelatorio() void
         +podeAprovarAlteracoes() boolean
         +podeGerenciarUsuarios() boolean
+        +podeGerenciarCatalogo() boolean
     }
 
     Usuario <|-- Vendedor
     Usuario <|-- Apoio
     Usuario <|-- Administrador
+    ServicoAutenticacao --> RepositorioUsuariosExcel
+    ServicoVendas --> RepositorioUsuariosExcel
+    ServicoVendas --> Usuario
+    ServicoUsuarios ..> RepositorioUsuariosExcel
   

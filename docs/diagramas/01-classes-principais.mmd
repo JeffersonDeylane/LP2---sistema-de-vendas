@@ -1,72 +1,116 @@
 classDiagram
     direction TB
 
+    class Main
+    class ServicoAutenticacao
+    class ServicoVendas
+    class RepositorioUsuariosExcel
+    class RepositorioVendasExcel
+    class ProcessadorPlanilhas
+
     class Usuario {
         <<abstract>>
-        -Long id
+        -int id
         -String nome
         -String login
         -String senhaHash
-        +temPermissao(Permissao) boolean
+        -boolean ativo
+        +podeAprovarAlteracoes() boolean
+        +podeGerenciarUsuarios() boolean
+        +podeGerenciarCatalogo() boolean
     }
     class Vendedor {
-        +solicitarAlteracao()
-        +solicitarReativacao()
+        -String matricula
     }
-    class Apoio {
-        +aprovarSolicitacao()
-        +recusarSolicitacao()
-        +reativarVenda()
-    }
-    class Administrador {
-        +gerenciarUsuarios()
-        +gerarRelatorio()
-    }
+    class Apoio
+    class Administrador
     Usuario <|-- Vendedor
     Usuario <|-- Apoio
     Usuario <|-- Administrador
 
     class Cliente {
-        -Long id
+        -int id
+        -String identificacao
         -String nome
-        -String documento
+        -boolean ativo
     }
     class Contrato {
+        -int id
         -String numero
-        -List~ItemVenda~ itens
-        +obterProdutoPrincipal() ItemVenda
-        +obterStatusGeral() StatusVenda
-        +calcularComissaoTotal() BigDecimal
+        -int clienteId
+        -boolean ativo
     }
     class Produto {
-        -Long id
-        -String descricao
-        -TipoProduto tipo
-        -String modalidade
+        -int id
+        -String codigo
+        -String nome
+        -String categoria
+        -BigDecimal preco
+        -String unidade
+        -boolean permiteFracao
+        -boolean ativo
     }
     class ItemVenda {
-        -Long id
-        -int quantidade
-        -StatusVenda status
-        -BigDecimal comissaoInformada
-        +alterarStatus(StatusVenda)
+        -int id
+        -int produtoId
+        -BigDecimal quantidade
+        -String codigoProduto
+        -String nomeProduto
+        -String categoria
+        -String unidade
+        -BigDecimal precoUnitario
+        -BigDecimal subtotal
     }
+    class Venda {
+        -int id
+        -int clienteId
+        -int vendedorId
+        -Integer contratoId
+        -LocalDateTime criadaEm
+        -LocalDateTime confirmadaEm
+        -EstadoVenda estado
+        -List~ItemVenda~ itens
+        -BigDecimal total
+    }
+    class EstadoVenda {
+        <<enumeration>>
+        RASCUNHO
+        CONFIRMADA
+    }
+
     class OperacaoComercial {
         <<abstract>>
         -Long id
         -LocalDate dataCadastro
     }
-    class VendaComercial
-    class MudancaTecnologia
+    class VendaComercial {
+        <<esqueleto>>
+    }
+    class MudancaTecnologia {
+        <<esqueleto>>
+    }
     class SeletorProdutoPrincipal {
+        <<esqueleto>>
         +selecionar(Contrato) ItemVenda
     }
 
+    Main --> ServicoAutenticacao
+    Main --> ServicoVendas
+    Main --> ProcessadorPlanilhas
+    ServicoAutenticacao --> RepositorioUsuariosExcel
+    ServicoVendas --> RepositorioVendasExcel
+    ServicoVendas --> RepositorioUsuariosExcel
     OperacaoComercial <|-- VendaComercial
     OperacaoComercial <|-- MudancaTecnologia
     VendaComercial --> Contrato
-    OperacaoComercial --> Vendedor : responsavel
     Cliente "1" --> "0..*" Contrato
-    Contrato "1" *-- "1..*" ItemVenda
+    Cliente "1" --> "0..*" Venda
+    Venda "0..*" --> "0..1" Contrato : contratoId opcional
+    Venda "0..*" --> "1" Vendedor : vendedorId
+    Venda "1" *-- "0..*" ItemVenda
     ItemVenda "*" --> "1" Produto
+    Venda --> EstadoVenda
+    OperacaoComercial --> Vendedor : responsavel
     Contrato ..> SeletorProdutoPrincipal
+
+    note for OperacaoComercial "Esqueleto ainda nao conectado ao fluxo ativo de vendas."
