@@ -1,4 +1,4 @@
-﻿# Como funciona o processamento de planilhas
+# Como funciona o processamento de planilhas
 
 Guia de estudo e apresentação · Código conferido em **13/11/2026**.
 
@@ -32,7 +32,7 @@ flowchart TD
     B --> G[PlanilhasIO.escreverTabela: aba Analítico]
     B --> H{Existe claro.xlsx?}
     H -->|Sim| I[ComplementadorClaro.adicionar]
-    I --> J[CruzadorContratos.cruzar: quatro produtos]
+    I --> J[CruzadorContratos: três cruzamentos e lista de TV]
     H -->|Não: registrar aviso| K[GeradorRelatorios.criar]
     J --> K
     K --> L[PlanilhasIO.salvar: arquivo da empresa]
@@ -120,7 +120,7 @@ A classe oferece inclusão/remoção de colunas, cópia de linhas, seleção de 
 5. Percorre as linhas e executa as regras de produto.
 6. Define `PORT = 0`, pois exige revisão manual.
 7. Soma os seis indicadores na memória.
-8. Define `Empresa = PE` quando o supervisor é `ZAIRO JUNIOR` ou `EDVALDO SANTOS`; nos demais casos usa a empresa do nome do arquivo.
+8. Define a empresa inicial pelo nome do arquivo. Classifica Pedro Melo como AL, Raissa como PB e Anderson como PE quando o nome aparece no campo Supervisor. Os nomes completos Zairo Junior e Edvaldo Santos também recebem PE.
 
 Os nomes de cabeçalhos são relevantes: `Produtos` e `produtos` não são automaticamente equivalentes.
 
@@ -169,7 +169,7 @@ Se `claro.xlsx` existir, `ComplementadorClaro.adicionar` lê suas abas e conside
 
 Para saída RDT, exclui parceiro `VNA TELECOM LTDA ME`; para VNA, exclui `RDT TELECOM LTDA`. No CHIP, exclui `CD_COMTA = 4ZEJ` para RDT e `3Z67` para VNA.
 
-`NormalizadorContrato.normalizar` remove o sufixo artificial `.0` de um identificador numérico textual e preserva zeros à esquerda quando já estão no texto. `normalizarChip` também tenta retirar os prefixos `9700`, `136`, `9500` e `63700`, nessa sequência. Zeros que eram apenas formatação de uma célula numérica não fazem parte do valor numérico.
+`NormalizadorContrato.normalizar` remove o sufixo artificial `.0` de um identificador numérico textual e preserva zeros à esquerda quando já estão no texto. `normalizarChip` também tenta retirar os prefixos `9700`, `136`, `9500`, `63700`, `9070`, `68200`, `2914`, `4800` e `94700`, nessa sequência. Zeros que eram apenas formatação de uma célula numérica não fazem parte do valor numérico.
 
 As abas filtradas são copiadas para o novo arquivo; a base original não é salva por essa operação. Colunas selecionadas ausentes ficam com valores nulos, portanto a seleção não equivale a uma validação completa de esquema.
 
@@ -177,16 +177,17 @@ Sem `claro.xlsx`, registra aviso e continua com o analítico e os relatórios, s
 
 ### 3.8. Cruzar os contratos
 
-O processador chama `CruzadorContratos.cruzar` quatro vezes:
+O processador chama `CruzadorContratos.cruzar` para três produtos:
 
 | Indicador no analítico | Aba complementar | Coluna de contrato | Coluna acrescentada |
 |---|---|---|---|
 | `VIRTUA` | `virtua` | `NR_CONTRATO` | `virtua_analitico` |
-| `TV` | `tv` | `DT` | `tv_analitico` |
 | `CHIP` | `chip` | `CONTRATO_NET` | `chip_analitico` |
 | `FONE` | `tel fixo` | `NR_CONTRATO` | `fone_analitico` |
 
-Para cada produto, seleciona contratos do analítico cujo indicador é 1 e compara com os contratos da aba complementar, após normalização.
+Na aba `tv`, `listarTvAnalitico` acrescenta os contratos de TV na coluna `tv_analitico`, preservando a ordem e as duplicatas do Analítico, sem cruzamento ou cores.
+
+Para cada produto cruzado, seleciona contratos do analítico cujo indicador é 1 e compara com os contratos da aba complementar, após normalização.
 
 - **Nas duas fontes:** preenche a coluna acrescentada com o contrato correspondente.
 - **Somente na base complementar:** colore a fonte do contrato original de vermelho.
@@ -198,14 +199,8 @@ Usa `Set` para comparar identificadores únicos e evitar repetição na compara�
 
 ### 3.9. Gerar relatórios
 
-`GeradorRelatorios.criar` chama dois métodos privados:
+`GeradorRelatorios.criar` gera a aba `Planilha1`. O resumo agrupa por supervisor e vendedor, soma `VIRTUA`, `CHIP`, `PORT`, `TV`, `SOMA` e `Valor` e ordena alfabeticamente os vendedores dentro de cada supervisor. O Java escreve um resumo estático. A `Planilha2` foi desativada no fluxo novo.
 
-| Método | Aba gerada | Funcionamento |
-|---|---|---|
-| `resumoSupervisorVendedor` | `Planilha1` | Agrupa por supervisor + vendedor, soma `VIRTUA`, `CHIP`, `PORT`, `TV`, `SOMA` e `Valor`; ordena pela soma de `Valor`, decrescente. |
-| `resumoVendedorData` | `Planilha2` | Agrupa por vendedor e data de instalação; conta linhas com `Produtos` preenchido e calcula o total. Campos vazios aparecem como `(blank)`. |
-
-Esses relatórios usam a tabela analítica tratada, não uma nova tabela resultante do cruzamento. São **resumos estáticos**, não tabelas dinâmicas nativas do Excel. O campo `Valor` é somado como veio da origem; isso não implementa cálculo de comissão por política.
 
 ### 3.10. Salvar e consolidar
 

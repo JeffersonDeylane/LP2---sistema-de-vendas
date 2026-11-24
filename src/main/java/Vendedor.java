@@ -1,5 +1,13 @@
 
+/** Perfil responsável por registrar vendas e solicitar alterações e reativações. */
 public class Vendedor extends Usuario {
+    public void solicitarAlteracao(SolicitacaoAlteracao solicitacao) {
+        throw new UnsupportedOperationException("Implementação pendente");
+    }
+
+    public void solicitarReativacao(GrupoCancelamento grupo) {
+        throw new UnsupportedOperationException("Implementação pendente");
+    }
 
     
     private String matricula; //só do vendedor

@@ -1,10 +1,10 @@
-# Diagramas Mermaid — Sistema de Tratamento de Vendas e Comissões
+# Diagramas Mermaid — Modelo-alvo e regras de negócio
 
 **Projeto:** Linguagem de Programação II — Java  
 **Objetivo:** documentação dos diagramas da versão inicial, com persistência EXCLUSIVAMENTE em planilhas Excel. SQLite fica para uma versão futura.  
 **Como usar:** copie o conteúdo de cada bloco `mermaid` para https://mermaid.live/ ou visualize este Markdown em um editor compatível.
 
-> **Atenção:** nesta primeira versão não haverá banco de dados. O arquivo `BASE_GERAL.xlsx` será a fonte persistente central. Estes são diagramas de **planejamento**. As classes, assinaturas, campos e relacionamentos ainda podem ser refinados na implementação. O fluxo de produtos secundários e estornos de comissões pagas requer detalhamento adicional.
+> **Atenção:** este documento mantém o modelo-alvo e regras comerciais planejadas; não é um retrato fiel de todas as funcionalidades executáveis. Os diagramas de estado atual ficam nos arquivos [01-classes-principais.mmd](01-classes-principais.mmd) a [09-usuários.mmd](09-usuários.mmd). Hoje, cadastro e vendas persistidos em Excel estão implementados; comissão, cancelamento e revisão comercial genérica continuam pendentes.
 
 ## 1. Diagrama de classes — Estrutura principal
 

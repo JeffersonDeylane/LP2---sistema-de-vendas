@@ -64,7 +64,7 @@ def criar_tabelas_dinamicas(caminho_arquivo):
         excel.CalculateFull()
         cache = wb.PivotCaches().Create(SourceType=1, SourceData=origem)
         criar_tabela_dinamica(wb, cache, ultima_linha)
-        criar_tabela_dinamica_vendedor_data(wb, cache, excel)
+        # criar_tabela_dinamica_vendedor_data(wb, cache, excel)  # Reative para recriar a aba Planilha2.
         wb.Save()
         print("✅ Tabelas dinâmicas criadas com sucesso!")
     finally:
@@ -320,6 +320,30 @@ def normalizar_contrato(valor):
     return re.sub(r"^(\d+)\.0+$", r"\1", texto)
 
 
+def adicionar_lista_tv_analitico(wb, df_analitico):
+    """Lista os contratos de TV do Analítico na aba tv, sem cruzamento ou cores."""
+    nome_aba = next(
+        (aba for aba in wb.sheetnames if aba.strip().casefold() == "tv"),
+        None,
+    )
+    if nome_aba is None:
+        print(f"Aba 'tv' não encontrada. Abas existentes: {wb.sheetnames}")
+        return
+
+    ws = wb[nome_aba]
+    coluna_saida = ws.max_column + 1
+    ws.cell(1, coluna_saida).value = "tv_analitico"
+
+    contratos_tv = (
+        df_analitico.loc[df_analitico["TV"] == 1, "Contrato"]
+        .map(normalizar_contrato)
+    )
+    contratos_tv = [contrato for contrato in contratos_tv if contrato]
+
+    for linha, contrato in enumerate(contratos_tv, start=2):
+        ws.cell(linha, coluna_saida).value = contrato
+
+
 def tratar_contrato_chip(df_saida):
     """
     Remove os prefixos dos contratos da aba CHIP.
@@ -329,9 +353,16 @@ def tratar_contrato_chip(df_saida):
     - 136
     - 9500
     - 63700
+    - 9070
+    - 68200
+    - 2914
+    - 4800
+    - 94700
     """
 
-    prefixos = ("9700", "136", "9500", "63700")
+    prefixos = (
+        "9700", "136", "9500", "63700", "9070", "68200", "2914", "4800", "94700"
+    )
 
     # Garante que a coluna seja texto
     df_saida["CONTRATO_NET"] = (
@@ -546,14 +577,8 @@ def criar_tabela_dinamica(wb, cache, ultima_linha):
     for coluna in ("VIRTUA", "CHIP", "PORT", "TV", "SOMA", "Valor"):
         tabela.AddDataField(tabela.PivotFields(coluna), f"Soma de {coluna}", -4157)
 
-    # ============================================================
-    # ORDENA OS VENDEDORES PELA SOMA DE VALOR (MAIOR → MENOR)
-    # ============================================================
-
-    campo_vendedor.AutoSort(
-        2,                  # 2 = ordem decrescente
-        "Soma de Valor"     # Nome do campo de valores
-    )
+    # Ordena os vendedores alfabeticamente dentro de cada supervisor.
+    campo_vendedor.AutoSort(1, "Vendedor")  # 1 = ordem crescente
 
 
     # ============================================================
@@ -669,11 +694,15 @@ def processar_base(caminho_arquivo, nome_arquivo):
         df["Empresa"] = tipo
 
     if "Supervisor" in df.columns:
+        supervisores = df["Supervisor"].fillna("").astype(str).str.strip().str.upper()
         supervisores_pe = (
-            df["Supervisor"].fillna("").astype(str).str.strip().str.upper()
+            supervisores
             .isin(["ZAIRO JUNIOR", "EDVALDO SANTOS"])
         )
         df.loc[supervisores_pe, "Empresa"] = "PE"
+        df.loc[supervisores.str.contains("PEDRO MELO", regex=False), "Empresa"] = "AL"
+        df.loc[supervisores.str.contains("RAISSA", regex=False), "Empresa"] = "PB"
+        df.loc[supervisores.str.contains("ANDERSON", regex=False), "Empresa"] = "PE"
 
     novo_nome = f"{tipo} - ANALITICO {data_atual}.xlsx"
 
@@ -690,9 +719,10 @@ def processar_base(caminho_arquivo, nome_arquivo):
     wb = load_workbook(caminho_saida)
     try:
         adicionar_base_complementar(wb, caminho_base, tipo)
+        adicionar_lista_tv_analitico(wb, df_analitico)
         cruzamentos = (
             ("virtua", "VIRTUA", "NR_CONTRATO", "virtua_analitico"),
-            ("tv", "TV", "DT", "tv_analitico"),
+            # ("tv", "TV", "DT", "tv_analitico"),  # Reative para comparar os contratos da aba tv.
             ("chip", "CHIP", "CONTRATO_NET", "chip_analitico"),
             ("tel fixo", "FONE", "NR_CONTRATO", "fone_analitico"),
         )

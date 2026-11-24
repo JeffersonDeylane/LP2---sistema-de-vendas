@@ -13,7 +13,7 @@ public final class NormalizadorContrato {
     /** Repete o tratamento sequencial dos prefixos feito pelo Python. */
     public static String normalizarChip(Object valor) {
         String s = normalizar(valor);
-        for (String p : new String[]{"9700", "136", "9500", "63700"}) {
+        for (String p : new String[]{"9700", "136", "9500", "63700", "9070", "68200", "2914", "4800", "94700"}) {
             if (s.startsWith(p)) s = s.substring(p.length());
         }
         return s;

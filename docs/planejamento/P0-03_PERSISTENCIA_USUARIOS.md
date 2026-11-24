@@ -85,7 +85,7 @@ foram executados e aprovados. Os testes de inicialização exercitaram o `Main` 
 base existente, ausente e corrompida e confirmaram que os exemplos não são salvos.
 
 Comando efetivamente executado na raiz, com JDK Azul 25.0.2 e Maven 3.9.11,
-compilando para Java 17 conforme o `pom.xml`:
+compilando para Java 25 conforme o `pom.xml`:
 
 ```powershell
 $env:JAVA_HOME = 'C:\Users\Marcone\.jdks\azul-25.0.2'

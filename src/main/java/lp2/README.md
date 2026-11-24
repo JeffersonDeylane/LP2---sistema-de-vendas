@@ -2,7 +2,7 @@
 
 > Para estudar o fluxo, as chamadas entre classes e os conceitos de POO, leia o [Guia de processamento de planilhas](../../../../docs/planejamento/GUIA_PROCESSAMENTO_PLANILHAS.md).
 
-Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para Java 17 com **Apache POI** e **Apache Commons CSV**.
+Conversão modular do arquivo Python `processar_planilhas_minusculas.py` para Java com **Apache POI** e **Apache Commons CSV**.
 
 ## Instalar no projeto existente
 
@@ -29,7 +29,7 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 | `normalizar_contrato`, `tratar_contrato_chip` | `NormalizadorContrato` |
 | regras `VIRTUA/CHIP/TV/FONE/DCC` | `RegraProduto`, `RegraPresencaProduto`, `RegraDcc` |
 | `adicionar_base_complementar` | `ComplementadorClaro` |
-| `cruzar_analitico` | `CruzadorContratos` |
+| `adicionar_lista_tv_analitico`, `cruzar_analitico` | `CruzadorContratos` |
 | `salvar_analitico` | `PlanilhasIO` |
 | `criar_vendas_consolidado` | `ConsolidadorVendas` |
 | `criar_tabelas_dinamicas` | `GeradorRelatorios` (resumos de dados) |
@@ -37,16 +37,15 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 ## Regras e limitações importantes
 
 - Mantém identificação de `VIRTUA`, `CHIP`, `TV`, `FONE`; `DCC` exige VIRTUA e DÉBITO; `PORT` continua zero para análise manual; `SOMA` é fórmula `SUM(...)` nos arquivos.
-- Mantém identificação de empresa VNA/RDT pelo nome do arquivo, e reclassificação de `ZAIRO JUNIOR`/`EDVALDO SANTOS` como `PE`.
+- A origem VNA/RDT é definida pelo nome do arquivo. Na coluna `Empresa`, Pedro Melo passa a AL, Raissa a PB e Anderson a PE. Zairo Junior e Edvaldo Santos também ficam em PE.
 - Mantém filtros específicos para CHIP, desistência/venda bruta e parceiros da Claro, e cruzamentos por contrato com divergências em vermelho/verde.
-- As abas `Planilha1` e `Planilha2` são **resumos tabulares, não tabelas dinâmicas nativas do Excel**, pois `win32com.client` automatiza Excel/Windows e não tem substituição direta na API utilizada. Os campos agregados são os mesmos, mas formatação, agrupamento automático de pivot, cache e atualização interativa não são equivalentes.
+- A `Planilha1` é um resumo estático agrupado por supervisor e vendedor, em ordem alfabética. O Python gera um pivô nativo via Excel. A geração da `Planilha2` está desativada no fluxo atual.
 - A cada execução, a versão Java limpa os arquivos regulares da pasta `dados/exportacao/arquivos_para_processar/saida`, como o script Python. Subpastas não são removidas.
 - Se houver mais de um arquivo de entrada da **mesma empresa**, cada um é processado e substitui a mesma saída; a última entrada em ordem alfabética prevalece, como ocorre quando o Python sobrescreve o mesmo nome de arquivo. A consolidação inclui uma única cópia dessa saída.
-- O resumo `Planilha2` agrupa por vendedor e data de instalação e conta somente linhas com `Produtos` preenchido, preservando também as categorias em branco do pivô Python.
+- Na aba `tv`, a coluna `tv_analitico` lista os contratos normalizados do Analítico na ordem original, incluindo duplicatas. Os cruzamentos com cores são feitos nas abas `virtua`, `chip` e `tel fixo`.
 - Não altera `BASE_GERAL.xlsx`, nem implementa aprovação de divergências, auditoria, comissão ou regras de cancelamento: esses são módulos de domínio que devem ficar separados do processo ETL de planilhas.
 - Para evitar inconsistência numérica, confira os resultados contra o Python antes de usar dados reais. A leitura CSV usa UTF-8; outras codificações precisam de adaptação.
 - O valor `Valor` da planilha é tratado como valor numérico para sumarização, sem inferir que se trata de receita de cliente (pode ser comissão, conforme base).
-- A regra atual do Python coloca `Empresa=PE` para os dois supervisores listados. Se sua nova convenção comercial eliminar PE, altere conscientemente em `TratadorAnalitico` após confirmar a regra desejada.
 - Arquivos XLSX são salvos com gravação temporária e substituição atômica quando suportada. Se o arquivo estiver aberto/bloqueado, a gravação poderá falhar com aviso.
 
 ## Organização e POO
@@ -55,4 +54,4 @@ Conversão modular do arquivo Python `processar_planilhas_minusculas(2).py` para
 
 ## Verificação
 
-Os testes automatizados verificam os resumos, categorias em branco, substituição de entradas da mesma empresa e consolidação. A execução contra as planilhas reais ainda deve ser conferida; os pivôs Java são resumos estáticos e não têm o cache, a atualização interativa ou todos os recursos de formatação dos pivôs nativos do Excel.
+Os testes automatizados verificam a lista de TV, os prefixos de CHIP, a classificação por supervisor, a ordenação do resumo, a substituição de entradas da mesma empresa e a consolidação.

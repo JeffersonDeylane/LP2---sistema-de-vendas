@@ -1,11 +1,30 @@
 flowchart TD
-    A["Relatorios Excel e CSV externos"] --> B["Importador Java Apache POI"]
-    B --> C["Normalizacao e comparacao"]
-    D[("BASE_GERAL.xlsx")] --> C
-    C --> E["Solicitacoes e divergencias"]
-    E --> F["Apoio ou ADM revisa"]
-    F --> G["Aplicar somente decisoes aprovadas"]
-    G --> H["Gravar copia temporaria e validar"]
-    H --> I["Backup e substituicao segura da base"]
-    I --> D
-    D --> J["Relatorios Excel e CSV"]
+    subgraph Aplicacao["Aplicacao Java"]
+        A["Main"]
+        B["ServicoAutenticacao"]
+        C["ServicoVendas"]
+        D["RepositorioUsuariosExcel"]
+        E["RepositorioVendasExcel"]
+        F["PlanilhasIO: grava base com backup"]
+        G["ProcessadorPlanilhas"]
+        L["PlanilhasIO: le e grava relatorios"]
+        A --> B --> D
+        A --> C
+        C --> E
+        C --> D
+        D -->|"grava aba USUARIOS"| F
+        E -->|"grava abas comerciais"| F
+        G --> L
+    end
+
+    subgraph Arquivos["Arquivos Excel e CSV"]
+        H[("BASE_GERAL.xlsx")]
+        I["dados/importacao"]
+        J["dados/exportacao/arquivos_para_processar/saida"]
+        K["dados/exportacao/vendas.xlsx"]
+    end
+
+    F --> H
+    I --> G
+    L --> J
+    L --> K

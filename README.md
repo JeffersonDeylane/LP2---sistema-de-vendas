@@ -41,15 +41,10 @@ Execute na raiz pelo PowerShell:
 Use **4** para cadastrar um vendedor (nome, login, senha e matrícula), **1**
 para entrar, **5** para sair da conta e **0** para encerrar. A opção **3** exige
 login. As contas são recuperadas de `dados/BASE_GERAL.xlsx`, aba `USUARIOS`;
-o primeiro cadastro cria o arquivo. Senhas são armazenadas com PBKDF2 e salt,
-reutilizando a persistência e o backup existentes. O cadastro é aberto nesta
-versão, sem autorização por perfil, e a senha fica visível ao digitar no terminal.
-Hashes fictícios antigos não autenticam; cadastre uma conta nova pelo menu.
 
-Validação desta entrega: compilação com JDK 21 para Java 17 e **82 testes
-aprovados**, executados diretamente pelo JUnit 4.13.2 com as dependências
-locais nas versões do projeto. Inclui os quatro novos testes de autenticação.
-Os artefatos da validação ficam em `target/`, ignorado pelo Git.
+Validação deste upgrade: compilação com Temurin 25.0.5.1 para Java 25 e **84
+testes aprovados** com Maven. Os artefatos da validação ficam em `target/`,
+ignorado pelo Git.
 
 Veja [EXPLICACAO_LOGIN.txt](EXPLICACAO_LOGIN.txt) para detalhes das mudanças,
 do código reaproveitado do Marcone e dos limites. As descrições históricas abaixo
@@ -156,7 +151,7 @@ As versões declaradas pertencem ao [pom.xml do módulo](src/main/python/java_tr
 
 | Tecnologia | Versão/evidência | Necessidade |
 |---|---|---|
-| JDK | Java 17 declarado por maven.compiler.release | Compilar/executar Java; usar JDK, não apenas JRE |
+| JDK | Java 21 declarado por maven.compiler.release | Compilar/executar Java; usar JDK, não apenas JRE |
 | Maven | Versão não fixada; sem wrapper | Somente processamento Java |
 | Apache POI poi-ooxml | 5.4.1 | Excel no módulo Java |
 | Apache Commons CSV | 1.13.0 | CSV no módulo Java |
@@ -190,7 +185,7 @@ O clone não foi executado na revisão. Não há URL fictícia apresentada como 
 
 ### 2. Conferir o ambiente
 
-Instale/configure JDK 17 e, para o módulo de planilhas, Maven. Disponibilize seus executáveis no PATH e confira:
+Instale/configure JDK 21 ou superior e, para o módulo de planilhas, Maven. Disponibilize seus executáveis no PATH e confira:
 
 ~~~powershell
 java -version

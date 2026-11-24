@@ -1,4 +1,40 @@
 classDiagram
+    class ServicoVendas {
+        -RepositorioVendasExcel vendas
+        -RepositorioUsuariosExcel usuarios
+    }
+    class ServicoAutenticacao {
+        -RepositorioUsuariosExcel repositorio
+    }
+    class RepositorioVendasExcel {
+        -Path arquivo
+        +listarClientes() List~Cliente~
+        +listarProdutos() List~Produto~
+        +listarContratos() List~Contrato~
+        +listarVendas() List~Venda~
+        +salvar() void
+    }
+    class RepositorioUsuariosExcel {
+        -Path arquivo
+        +listar()
+        +salvar(Usuario)
+    }
+    class PlanilhasIO {
+        <<utility>>
+        +salvarComBackup() void
+    }
+    class BASE_GERAL {
+        <<arquivo Excel>>
+    }
+
+    ServicoVendas --> RepositorioVendasExcel
+    ServicoVendas --> RepositorioUsuariosExcel
+    ServicoAutenticacao --> RepositorioUsuariosExcel
+    RepositorioVendasExcel --> PlanilhasIO
+    RepositorioUsuariosExcel --> PlanilhasIO
+    RepositorioVendasExcel --> BASE_GERAL
+    RepositorioUsuariosExcel --> BASE_GERAL
+
     class RepositorioContrato {
         <<interface>>
         +buscarPorId(String) Contrato
@@ -6,20 +42,19 @@ classDiagram
         +salvar(Contrato) void
     }
     class RepositorioContratoExcel {
+        <<pendente>>
         -String caminhoBase
-        +buscarPorId(String) Contrato
-        +listar() List~Contrato~
-        +salvar(Contrato) void
     }
     class ServicoContrato {
+        <<pendente>>
         -RepositorioContrato repositorio
-        +consultar(String) Contrato
-        +aplicarAlteracaoAprovada(Contrato) void
     }
     class GerenciadorArquivoExcel {
-        +abrirBase() void
-        +salvarComBackup() void
+        <<pendente>>
     }
     RepositorioContrato <|.. RepositorioContratoExcel
     ServicoContrato --> RepositorioContrato
-    RepositorioContratoExcel --> GerenciadorArquivoExcel
+    RepositorioContratoExcel ..> GerenciadorArquivoExcel
+
+    note for RepositorioContrato "Interface declarada, ainda fora do fluxo ativo."
+    note for RepositorioContratoExcel "Metodos ainda pendentes."

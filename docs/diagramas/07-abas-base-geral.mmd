@@ -1,90 +1,62 @@
 erDiagram
+    %% Abas de solicitacao, decisao, historico e comissao ainda nao sao persistidas.
     USUARIOS {
-        string usuario_id PK
-        string nome
-        string login
-        string perfil
-    }
-    CONTRATOS {
-        string contrato_id PK
-        string numero_contrato
-        string empresa
-        string vendedor_id FK
-        string cliente_id FK
+        int ID PK
+        string NOME
+        string LOGIN
+        string SENHA_HASH
+        string PERFIL
+        boolean ATIVO
+        string MATRICULA
     }
     CLIENTES {
-        string cliente_id PK
-        string nome
-    }
-    ITENS_VENDA {
-        string item_id PK
-        string contrato_id FK
-        string produto_id FK
-        int quantidade
-        string status
-        decimal comissao_informada
+        int ID PK
+        string IDENTIFICACAO
+        string NOME
+        boolean ATIVO
     }
     PRODUTOS {
-        string produto_id PK
-        string tipo
-        string plano
-        string modalidade
+        int ID PK
+        string CODIGO
+        string NOME
+        string CATEGORIA
+        decimal PRECO
+        string UNIDADE
+        boolean PERMITE_FRACAO
+        boolean ATIVO
     }
-    SOLICITACOES {
-        string solicitacao_id PK
-        string contrato_id FK
-        string solicitante_id FK
-        string status
+    CONTRATOS {
+        int ID PK
+        string NUMERO
+        int CLIENTE_ID FK
+        boolean ATIVO
     }
-    DECISOES {
-        string decisao_id PK
-        string solicitacao_id FK
-        string usuario_id FK
-        string resultado
+    VENDAS {
+        int ID PK
+        int CLIENTE_ID FK
+        int VENDEDOR_ID FK
+        int CONTRATO_ID FK
+        datetime CRIADA_EM
+        datetime CONFIRMADA_EM
+        string ESTADO
+        decimal TOTAL
     }
-    HISTORICO {
-        string historico_id PK
-        string contrato_id FK
-        string usuario_id FK
-        string campo
-        string valor_anterior
-        string valor_novo
-        datetime data_hora
-    }
-    GRUPOS_CANCELAMENTO {
-        string grupo_id PK
-        string contrato_id FK
-        string responsavel_id FK
-    }
-    ITENS_CANCELADOS {
-        string registro_id PK
-        string grupo_id FK
-        string item_id FK
-        boolean reativado
-    }
-    IMPORTACOES {
-        string lote_id PK
-        string nome_arquivo
-        datetime data_importacao
-    }
-    TABELA_COMISSOES {
-        string politica_id PK
-        string produto_tipo
-        string modalidade
-        decimal valor
-        string vigencia
+    ITENS_VENDA {
+        int ID PK
+        int VENDA_ID FK
+        int PRODUTO_ID FK
+        decimal QUANTIDADE
+        string CODIGO_PRODUTO
+        string NOME_PRODUTO
+        string CATEGORIA
+        string UNIDADE
+        decimal PRECO_UNITARIO
+        decimal SUBTOTAL
     }
 
-    CLIENTES ||--o{ CONTRATOS : possui
-    USUARIOS ||--o{ CONTRATOS : vende
-    CONTRATOS ||--|{ ITENS_VENDA : contem
-    PRODUTOS ||--o{ ITENS_VENDA : identifica
-    CONTRATOS ||--o{ SOLICITACOES : recebe
-    USUARIOS ||--o{ SOLICITACOES : solicita
-    SOLICITACOES ||--o{ DECISOES : recebe
-    USUARIOS ||--o{ DECISOES : analisa
-    CONTRATOS ||--o{ HISTORICO : registra
-    USUARIOS ||--o{ HISTORICO : executa
-    CONTRATOS ||--o{ GRUPOS_CANCELAMENTO : possui
-    GRUPOS_CANCELAMENTO ||--|{ ITENS_CANCELADOS : agrupa
-    ITENS_VENDA ||--o{ ITENS_CANCELADOS : afetado
+    CLIENTES ||--o{ CONTRATOS : titular
+    CLIENTES ||--o{ VENDAS : compra
+    USUARIOS ||--o{ VENDAS : registra
+    CONTRATOS o|--o{ VENDAS : opcional
+    VENDAS ||--|{ ITENS_VENDA : contem
+    PRODUTOS ||--o{ ITENS_VENDA : fotografado

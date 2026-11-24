@@ -10,13 +10,12 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ProcessamentoPlanilhasTest {
@@ -24,27 +23,74 @@ public class ProcessamentoPlanilhasTest {
     public final TemporaryFolder pastaTemporaria = new TemporaryFolder();
 
     @Test
-    public void resumoContaApenasProdutosNaoVaziosEIncluiCategoriasEmBranco() throws Exception {
+    public void resumoOrdenaVendedoresDentroDoSupervisorEGeraSoPlanilha1() throws Exception {
         TabelaDados dados = new TabelaDados(List.of(
-                "Supervisor", "Vendedor", "DataInstalacao", "Produtos",
-                "VIRTUA", "CHIP", "PORT", "TV", "SOMA", "Valor"));
-        dados.adicionarLinha(linha("Ana", LocalDate.of(2026, 11, 10), "VIRTUA"));
-        dados.adicionarLinha(linha("Ana", LocalDate.of(2026, 11, 10), ""));
-        dados.adicionarLinha(linha("", null, "TV"));
+                "Supervisor", "Vendedor", "VIRTUA", "CHIP", "PORT", "TV", "SOMA", "Valor"));
+        dados.adicionarLinha(Map.of("Supervisor", "Bruno", "Vendedor", "Ana", "Valor", 200));
+        dados.adicionarLinha(Map.of("Supervisor", "Amanda", "Vendedor", "Zélia", "Valor", 100));
+        dados.adicionarLinha(Map.of("Supervisor", "Amanda", "Vendedor", "Álvaro", "Valor", 10));
 
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             new GeradorRelatorios().criar(wb, dados);
 
-            var resumo = wb.getSheet("Planilha2");
-            int colunaData = coluna(resumo.getRow(0), "10/11/2026");
-            int colunaVazia = coluna(resumo.getRow(0), "(blank)");
-            int linhaAna = linha(resumo, "Ana");
-            int linhaVazia = linha(resumo, "(blank)");
-            assertEquals(1, (int) resumo.getRow(linhaAna).getCell(colunaData).getNumericCellValue());
-            assertEquals(0, (int) resumo.getRow(linhaAna).getCell(colunaVazia).getNumericCellValue());
-            assertEquals(0, (int) resumo.getRow(linhaVazia).getCell(colunaData).getNumericCellValue());
-            assertEquals(1, (int) resumo.getRow(linhaVazia).getCell(colunaVazia).getNumericCellValue());
+            var resumo = wb.getSheet("Planilha1");
+            assertEquals("Álvaro", resumo.getRow(1).getCell(1).getStringCellValue());
+            assertEquals("Zélia", resumo.getRow(2).getCell(1).getStringCellValue());
+            assertEquals("Bruno", resumo.getRow(3).getCell(0).getStringCellValue());
+            assertEquals(10, resumo.getRow(1).getCell(7).getNumericCellValue(), 0.001);
+            assertNull(wb.getSheet("Planilha2"));
         }
+    }
+
+    @Test
+    public void listaTvPreservaOrdemDuplicatasEContratosDaBase() throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            var tv = wb.createSheet(" TV ");
+            tv.createRow(0).createCell(0).setCellValue("DT");
+            tv.createRow(1).createCell(0).setCellValue("100");
+            tv.createRow(2).createCell(2).setCellValue("outra coluna");
+
+            TabelaDados analitico = new TabelaDados(List.of("TV", "Contrato"));
+            analitico.adicionarLinha(Map.of("TV", 1, "Contrato", "002.0"));
+            analitico.adicionarLinha(Map.of("TV", 0, "Contrato", "999"));
+            analitico.adicionarLinha(Map.of("TV", 1, "Contrato", " "));
+            analitico.adicionarLinha(Map.of("TV", 1, "Contrato", 123));
+            analitico.adicionarLinha(Map.of("TV", 1, "Contrato", "002"));
+
+            new CruzadorContratos().listarTvAnalitico(wb, analitico);
+
+            assertEquals("tv_analitico", tv.getRow(0).getCell(3).getStringCellValue());
+            assertEquals(4, tv.getRow(0).getLastCellNum());
+            assertEquals("100", tv.getRow(1).getCell(0).getStringCellValue());
+            assertEquals((short) 0, tv.getRow(1).getCell(0).getCellStyle().getIndex());
+            assertEquals("002", tv.getRow(1).getCell(3).getStringCellValue());
+            assertEquals("123", tv.getRow(2).getCell(3).getStringCellValue());
+            assertEquals("002", tv.getRow(3).getCell(3).getStringCellValue());
+            assertNull(tv.getRow(3).getCell(0));
+        }
+    }
+
+    @Test
+    public void reclassificaEmpresasPeloSupervisorComPrecedenciaDoPython() {
+        TabelaDados dados = new TabelaDados(List.of("Supervisor", "Produtos", "Contrato", "Empresa"));
+        List<String> supervisores = List.of(
+                " Regional Pedro Melo ", "raissa silva", "Sr. Anderson", "ZAIRO JUNIOR",
+                "EDVALDO SANTOS", "Pedro Melo e Raissa e Anderson", "Outro");
+        for (String supervisor : supervisores) {
+            dados.adicionarLinha(Map.of("Supervisor", supervisor, "Produtos", "TV",
+                    "Contrato", "01", "Empresa", "ORIGINAL"));
+        }
+        new TratadorAnalitico().tratar(dados, "VNA.xlsx");
+
+        assertEquals(List.of("AL", "PB", "PE", "PE", "PE", "PE", "VNA"),
+                dados.linhas().stream().map(linha -> linha.get("Empresa")).toList());
+    }
+
+    @Test
+    public void removeOsNovosPrefixosChipNaOrdemDoPython() {
+        assertEquals("001", NormalizadorContrato.normalizarChip("9070682002914480094700001"));
+        assertEquals("005", NormalizadorContrato.normalizarChip("94700005.0"));
+        assertEquals("005", NormalizadorContrato.normalizarChip("005"));
     }
 
     @Test
@@ -123,32 +169,6 @@ public class ProcessamentoPlanilhasTest {
             assertEquals("123", sheet.getRow(1).getCell(1).getStringCellValue());
             assertEquals(1, sheet.getLastRowNum());
         }
-    }
-
-    private static int coluna(Row linha, String nome) {
-        for (var celula : linha) {
-            if (nome.equals(celula.getStringCellValue())) return celula.getColumnIndex();
-        }
-        throw new AssertionError("Coluna não encontrada: " + nome);
-    }
-
-    private static int linha(org.apache.poi.ss.usermodel.Sheet sheet, String vendedor) {
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            if (vendedor.equals(sheet.getRow(i).getCell(0).getStringCellValue())) return i;
-        }
-        throw new AssertionError("Vendedor não encontrado: " + vendedor);
-    }
-
-    private static Map<String, Object> linha(String vendedor, LocalDate data, String produtos) {
-        Map<String, Object> linha = new LinkedHashMap<>();
-        linha.put("Supervisor", "Supervisora");
-        linha.put("Vendedor", vendedor);
-        linha.put("DataInstalacao", data);
-        linha.put("Produtos", produtos);
-        for (String campo : List.of("VIRTUA", "CHIP", "PORT", "TV", "SOMA", "Valor")) {
-            linha.put(campo, 0);
-        }
-        return linha;
     }
 
     private static void criarEntrada(Path arquivo, String vendedor) throws IOException {

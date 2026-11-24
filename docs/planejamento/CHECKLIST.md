@@ -13,7 +13,7 @@ Referência: [Requisitos da atividade — Unidade 03](../requisitos/REQUISITOS_A
 | Estado | Entrega | Evidência e limite atual |
 |---|---|---|
 | [x] | Estrutura do repositório e documentação versionada | Código em `src/`, documentos em `docs/` e histórico Git local; equipe definida; envio ao GitHub ainda precisa ser confirmado. |
-| [x] | Configuração Java 17/Maven na raiz | `pom.xml` com Apache POI, Commons CSV e JUnit 4. |
+| [x] | Configuração Java 21/Maven na raiz | `pom.xml` com Apache POI, Commons CSV e JUnit 4. |
 | [x] | Menu de terminal com processamento de planilhas integrado | `Main.java`, opção 3 chama `ProcessadorPlanilhas`; login/logout estão implementados. |
 | [x] | Base de usuários e validações | `Usuario` abstrata, `Vendedor`, `Apoio`, `Administrador` e `Validador`; matrícula, ativação/desativação e capacidades polimórficas. [Entrega P0-01](P0-01_USUARIOS.md), com 14 testes de usuários aprovados. |
 | [x] | Leitura e tratamento especializado de XLS/XLSX/CSV | `PlanilhasIO`, `TratadorAnalitico`, `ComplementadorClaro` e `NormalizadorContrato`. Não cadastra vendas do domínio genérico. |
