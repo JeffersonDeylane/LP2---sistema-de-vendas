@@ -12,8 +12,19 @@ classDiagram
     }
     class ServicoVendas
     class ServicoUsuarios {
-        <<pendente>>
+        +listar(Usuario) List~Usuario~
+        +alterar(Usuario, int, String, String) Usuario
+        +alterarSituacao(Usuario, int, boolean) Usuario
     }
+
+    class ServicoAutorizacao {
+        +exigirContaAtiva(Usuario) Usuario
+        +exigirSolicitante(Usuario, int) void
+        +exigirRevisor(Usuario, Usuario) void
+        +exigirResponsavelPorCancelamentoOuReativacao(Usuario) void
+    }
+    class ServicoImportacao
+    class ServicoCancelamento
 
     class Usuario {
         <<abstract>>
@@ -33,6 +44,7 @@ classDiagram
         +desativar() void
         +podeSolicitarAlteracao() boolean
         +podeAprovarAlteracoes() boolean
+        +podeAprovarAlteracoes(Usuario) boolean
         +podeGerenciarUsuarios() boolean
         +podeGerenciarCatalogo() boolean
     }
@@ -43,9 +55,9 @@ classDiagram
         +podeGerenciarUsuarios() boolean
     }
     class Apoio {
-        +aprovarSolicitacao() void
-        +recusarSolicitacao() void
-        +reativarVenda() void
+        +aprovarSolicitacao(SolicitacaoAlteracao) void
+        +recusarSolicitacao(SolicitacaoAlteracao, String) void
+        +reativarVenda(GrupoCancelamento) void
         +podeAprovarAlteracoes() boolean
         +podeGerenciarUsuarios() boolean
     }
@@ -61,7 +73,12 @@ classDiagram
     Usuario <|-- Apoio
     Usuario <|-- Administrador
     ServicoAutenticacao --> RepositorioUsuariosExcel
-    ServicoVendas --> RepositorioUsuariosExcel
     ServicoVendas --> Usuario
-    ServicoUsuarios ..> RepositorioUsuariosExcel
+    ServicoUsuarios --> RepositorioUsuariosExcel
+    ServicoAutorizacao --> RepositorioUsuariosExcel
+    ServicoAutenticacao --> ServicoAutorizacao
+    ServicoUsuarios --> ServicoAutorizacao
+    ServicoVendas --> ServicoAutorizacao
+    ServicoImportacao --> ServicoAutorizacao
+    ServicoCancelamento --> ServicoAutorizacao
   

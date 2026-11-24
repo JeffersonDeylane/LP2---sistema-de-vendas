@@ -68,10 +68,10 @@ Os perfis representam permissões por operação; não basta comparar um número
 | Operação | Vendedor | Apoio | Administrador |
 |---|---|---|---|
 | Entrar no sistema | Se ativo | Se ativo | Se ativo |
-| Consultar/registrar vendas | Próprias | Consultar no escopo autorizado | Acesso administrativo |
+| Consultar/registrar vendas | Próprias | Consultar no escopo autorizado (atualmente, toda a equipe) | Acesso administrativo |
 | Solicitar alteração | No próprio escopo | No escopo autorizado | No escopo autorizado |
-| Aprovar/recusar solicitação | Não | Sim, de outro usuário e no seu escopo | Sim, de outro usuário |
-| Cancelar/reativar | Não | Sim, no escopo autorizado | Sim |
+| Aprovar/recusar solicitação | Não | Sim, solcitações de terceiros de toda a equipe | Sim, de outro usuário |
+| Cancelar/reativar | Não | Sim, no escopo autorizado (atualmente, toda a equipe) | Sim |
 | Gerenciar usuários e catálogo | Não | Não | Sim |
 
 Aprovação, cancelamento e demais ações comerciais só serão habilitados quando implementados. Nenhum perfil pode autoaprovar ou ignorar regras comerciais. Validar permissões nos serviços, inclusive em chamadas fora da interface.
@@ -95,12 +95,12 @@ A aba **`USUARIOS` em `dados/BASE_GERAL.xlsx`** foi implementada na P0-03. A bas
 | ID | Estado | Entrega e critério de conclusão | Depende de |
 |---|:---:|---|---|
 | P0-01 | [x] | `Usuario`/`Vendedor` revisados; `Apoio`/`Administrador` implementados; despacho polimórfico demonstrado no `Main` e em testes. [Evidência e limites](P0-01_USUARIOS.md): 19 testes aprovados e menu verificado. | — |
-| P0-02 | [~] | Cadastro de usuários exige administrador ativo no serviço e no menu. Implementar autorização por perfil e escopo nas demais operações, seguindo a matriz acima. Bloquear usuário inativo e operações não permitidas. | P0-01 |
+| P0-02 | [~] | Autorização por conta ativa, perfil e escopo implementada e testada. Vendedor consulta e confirma apenas suas próprias vendas. Apoio e Administrador consultam, cancelam e reativam vendas de toda a equipe e podem aprovar ou recusar solicitações de terceiros. A autorização para solicitar alteração foi testada e aguarda integração ao fluxo de criação. A execução da aprovação, recusa, cancelamento e reativação segue nas tarefas P2-02 e P2-03. | P0-01 |
 | P0-03 | [x] | `RepositorioUsuariosExcel` implementado e integrado à carga inicial. IDs e perfis preservados, atualização por ID, validação estrita, backup e troca atômica. [Evidência e limites](P0-03_PERSISTENCIA_USUARIOS.md): 35 testes novos e suíte completa com 54 aprovados. | P0-01 |
-| P0-04 | [~] | Cadastro autorizado dos três perfis implementado: valida campos/login único, gera hash e salva. Admin padrão `admin`/`admin` fica registrado na base local; não há criação automática no código. Falta manutenção de usuários (edição/ativação/desativação). Trocar a senha padrão antes de usar dados reais. | P0-02, P0-03 |
+| P0-04 | [x] |Administrador ativo pode cadastrar os três perfis, listar usuários, editar nome e login e ativar ou desativar contas pelo menu. O sistema valida login único, salva as alterações no Excel pelo ID do usuário e impede a desativação do último administrador ativo. Se um administrador desativar a própria conta, a sessão é encerrada. | P0-02, P0-03 |
 | P0-05 | [x] | Login/logout implementados: verificar senha, bloquear conta inativa, manter usuário autenticado e limpar sessão ao sair. A opção de cadastro só aparece para administrador; o serviço também valida a permissão. | P0-04 |
 | P0-06 | [~] | Suíte completa: 84 testes aprovados. Testes cobrem os três perfis, persistência/reabertura, login, senha incorreta, conta inativa, login duplicado e bloqueio de cadastro sem administrador. Conferir dados/credenciais versionados na revisão final. | P0-05 |
-| P0-07 | [ ] | Registrar esquema da aba em `ESTRUTURA_DADOS.md`, decisões de acesso em `DECISOES_E_PENDENCIAS.md` e classes no UML. Evidenciar a primeira entrega funcionando. | P0-06 |
+| P0-07 | [x] | Esquema da aba `USUARIOS` conferido, decisões de acesso documentadas e UML de usuários atualizado. [Demonstração em base temporária](P0-07_DEMONSTRACAO.md) confirmou o login dos três perfis, o bloqueio de edição para Vendedor e Apoio e a persistência da edição feita pelo Administrador após reabrir o sistema. | P0-06 |
 ## 4. P1 — Base funcional: fazer em seguida
 
 O primeiro fluxo de cadastro de vendas foi integrado. A próxima etapa é completar

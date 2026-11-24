@@ -2,8 +2,19 @@
 public class SolicitacaoAlteracao {
     private String id;
     private Contrato contrato;
-    private Usuario solicitante;
+    private final Usuario solicitante;
     private String campo;
     private String valorProposto;
     private StatusSolicitacao status;
+
+    public SolicitacaoAlteracao(Usuario solicitante) {
+        if (solicitante == null) {
+            throw new IllegalArgumentException("Solicitante obrigatório.");
+        }
+        this.solicitante = solicitante;
+    }
+
+    public Usuario getSolicitante() {
+        return solicitante;
+    }
 }

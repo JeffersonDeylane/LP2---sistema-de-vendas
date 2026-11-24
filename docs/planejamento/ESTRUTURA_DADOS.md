@@ -2,10 +2,11 @@
 
 ## USUARIOS — implementado na P0-03
 
-**Atualização:** 14/11/2026. A API usa `dados/BASE_GERAL.xlsx` por padrão,
+**Atualização** · 24/11/2026. A API usa `dados/BASE_GERAL.xlsx` por padrão,
 relativo ao diretório de execução. `RepositorioUsuariosExcel(Path arquivo)`
 permite escolher outro caminho; o primeiro argumento do `Main` configura essa
-mesma localização. Não há arquivo de usuários ou credenciais distribuído no Git.
+mesma localização. O repositório Git contém a base e o backup com a conta de
+administrador de demonstração. A revisão desses arquivos é acompanhada na P0-06.
 
 A primeira linha deve conter exatamente estas sete colunas, nesta ordem:
 

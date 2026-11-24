@@ -9,11 +9,11 @@ import java.util.Objects;
 
 public final class ServicoVendas {
     private final RepositorioVendasExcel vendas;
-    private final RepositorioUsuariosExcel usuarios;
+    private final ServicoAutorizacao autorizacao;
 
     public ServicoVendas(RepositorioVendasExcel vendas, RepositorioUsuariosExcel usuarios) {
         this.vendas = Objects.requireNonNull(vendas);
-        this.usuarios = Objects.requireNonNull(usuarios);
+        this.autorizacao = new ServicoAutorizacao(usuarios);
     }
 
     public Cliente cadastrarCliente(Usuario solicitante, String identificacao, String nome) {
@@ -131,9 +131,9 @@ public final class ServicoVendas {
     }
 
     public List<Venda> listarVendas(Usuario solicitante) {
-        Usuario autorizado = exigirRegistrador(solicitante);
+        Usuario autorizado = autorizacao.exigirContaAtiva(solicitante);
         List<Venda> existentes = vendas.listarVendas();
-        if (autorizado instanceof Administrador) return existentes;
+        if (autorizado instanceof Administrador || autorizado instanceof Apoio) return existentes;
         return existentes.stream().filter(venda -> venda.getVendedorId() == autorizado.getId()).toList();
     }
 
@@ -166,7 +166,7 @@ public final class ServicoVendas {
     }
 
     private Usuario exigirRegistrador(Usuario solicitante) {
-        Usuario usuario = usuarioAtivoPersistido(solicitante);
+        Usuario usuario = autorizacao.exigirContaAtiva(solicitante);
         if (!(usuario instanceof Vendedor) && !(usuario instanceof Administrador)) {
             throw new IllegalArgumentException("Somente vendedor ou administrador pode operar vendas.");
         }
@@ -174,24 +174,11 @@ public final class ServicoVendas {
     }
 
     private Usuario exigirAdministradorCatalogo(Usuario solicitante) {
-        Usuario usuario = usuarioAtivoPersistido(solicitante);
+        Usuario usuario = autorizacao.exigirContaAtiva(solicitante);
         if (!(usuario instanceof Administrador) || !usuario.podeGerenciarCatalogo()) {
             throw new IllegalArgumentException("Apenas um administrador ativo pode cadastrar produtos.");
         }
         return usuario;
-    }
-
-    private Usuario usuarioAtivoPersistido(Usuario solicitante) {
-        if (solicitante == null) throw new IllegalArgumentException("Usuário autenticado obrigatório.");
-        Usuario persistido = usuarios.listar().stream()
-            .filter(usuario -> usuario.getId() == solicitante.getId())
-            .findFirst().orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
-        if (persistido.getClass() != solicitante.getClass()
-                || !persistido.getLogin().equals(solicitante.getLogin())
-                || !persistido.isAtivo()) {
-            throw new IllegalArgumentException("Usuário inativo ou sessão não corresponde à conta persistida.");
-        }
-        return persistido;
     }
 
     public record ItemSolicitado(int produtoId, BigDecimal quantidade) {

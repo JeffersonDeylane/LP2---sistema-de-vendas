@@ -11,6 +11,7 @@ public class Main {
     public static void main(String[] args) {
         Path arquivoBase = args.length == 0 ? Path.of("dados", "BASE_GERAL.xlsx") : Path.of(args[0]);
         RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivoBase);
+        ServicoUsuarios servicoUsuarios = new ServicoUsuarios(repositorio);
         ServicoAutenticacao autenticacao = new ServicoAutenticacao(repositorio);
         ServicoVendas servicoVendas = new ServicoVendas(
             new RepositorioVendasExcel(arquivoBase), repositorio);
@@ -45,6 +46,13 @@ public class Main {
                 System.out.println("10 - Confirmar venda");
                 System.out.println(usuarioAutenticado instanceof Administrador
                     ? "11 - Consultar vendas" : "11 - Consultar minhas vendas");
+            } else if (usuarioAutenticado instanceof Apoio) {
+                System.out.println("11 - Consultar vendas da equipe");
+            }
+            if (usuarioAutenticado != null && usuarioAutenticado.podeGerenciarUsuarios()) {
+                System.out.println("12 - Listar usuários");
+                System.out.println("13 - Editar usuário");
+                System.out.println("14 - Ativar ou desativar usuário");
             }
             System.out.println("0 - Sair");
             if (usuarioAutenticado != null) {
@@ -165,8 +173,34 @@ public class Main {
                             + confirmada.getTotal().toPlainString());
                         break;
                     case "11":
-                        exigirAcessoVendas(usuarioAutenticado);
                         listarVendas(servicoVendas.listarVendas(usuarioAutenticado));
+                        break;
+                    case "12":
+                        for (Usuario usuario : servicoUsuarios.listar(usuarioAutenticado)) {
+                            System.out.println(usuario.getId() + " - " + usuario.getNome()
+                                + " (" + usuario.getLogin() + ") - "
+                                + usuario.getClass().getSimpleName() + " - "
+                                + (usuario.isAtivo() ? "Ativo" : "Inativo"));
+                        }
+                        break;
+                    case "13":
+                        servicoUsuarios.exigirAdministrador(usuarioAutenticado);
+                        Usuario editado = servicoUsuarios.alterar(usuarioAutenticado,
+                            lerInteiro(scanner, "ID do usuário: "),
+                            lerCampo(scanner, "Novo nome: "), lerCampo(scanner, "Novo login: "));
+                        if (editado.getId() == usuarioAutenticado.getId()) usuarioAutenticado = editado;
+                        System.out.println("Usuário atualizado.");
+                        break;
+                    case "14":
+                        servicoUsuarios.exigirAdministrador(usuarioAutenticado);
+                        Usuario atualizado = servicoUsuarios.alterarSituacao(usuarioAutenticado,
+                            lerInteiro(scanner, "ID do usuário: "),
+                            lerSimNao(scanner, "Manter a conta ativa? (s/n): "));
+                        System.out.println(atualizado.isAtivo() ? "Usuário ativo." : "Usuário inativo.");
+                        if (atualizado.getId() == usuarioAutenticado.getId() && !atualizado.isAtivo()) {
+                            usuarioAutenticado = null;
+                            System.out.println("Sessão encerrada.");
+                        }
                         break;
                     case "0":
                         System.out.println("Encerrando o sistema...");

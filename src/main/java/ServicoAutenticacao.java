@@ -5,14 +5,16 @@ import java.util.Objects;
 /** Cadastro local de usuários e autenticação. */
 public final class ServicoAutenticacao {
     private final RepositorioUsuariosExcel repositorio;
+    private final ServicoAutorizacao autorizacao;
 
     public ServicoAutenticacao(RepositorioUsuariosExcel repositorio) {
         this.repositorio = Objects.requireNonNull(repositorio);
+        this.autorizacao = new ServicoAutorizacao(repositorio);
     }
 
     public Usuario cadastrar(Usuario solicitante, String perfil, String nome,
                             String login, String senha, String matricula) {
-        if (solicitante == null || !solicitante.isAtivo() || !solicitante.podeGerenciarUsuarios()) {
+        if (!autorizacao.exigirContaAtiva(solicitante).podeGerenciarUsuarios()) {
             throw new IllegalArgumentException("Apenas um administrador ativo pode cadastrar usuários.");
         }
         String loginValidado = Validador.textoObrigatorio(login, "Login");

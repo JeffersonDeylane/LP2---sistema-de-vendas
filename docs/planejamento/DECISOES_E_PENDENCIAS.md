@@ -18,6 +18,28 @@
 As decisões comerciais abaixo são históricas; em caso de conflito, prevalece a
 especificação vigente de regras de negócio.
 
+## Autorização da primeira entrega
+
+A autenticação exige conta ativa. O serviço de autorização relê o cadastro
+para conferir ID, login, perfil e situação antes das operações protegidas.
+
+| Operação | Vendedor | Apoio | Administrador |
+|---|---|---|---|
+| Consultar vendas | Próprias | Toda a equipe | Toda a equipe |
+| Registrar e confirmar vendas | Próprias | Sem permissão | Permitido |
+| Cadastrar produtos e gerenciar usuários | Sem permissão | Sem permissão | Permitido |
+
+O último Administrador ativo tem proteção contra desativação. Se outro
+Administrador estiver ativo, a autodesativação é permitida e encerra a sessão
+no terminal.
+
+Para os fluxos comerciais seguintes, o Vendedor pode solicitar alterações nas
+próprias vendas. Apoio e Administrador têm escopo de toda a equipe para
+solicitar alterações, revisar pedidos de terceiros, cancelar e reativar.
+A revisão bloqueia pedidos do próprio usuário pelo ID. A criação de
+solicitações ainda precisa chamar a validação de escopo. A execução da
+revisão, do cancelamento e da reativação está prevista na P2-02 e na P2-03.
+
 ## Decisões confirmadas
 - Aplicação Java com primeira versão persistida em **uma planilha Excel central** (`BASE_GERAL.xlsx`, múltiplas abas); sem banco de dados nesta etapa.
 - Fontes: planilhas Excel/CSV exportadas de outros sistemas. Python existente continua independente; integração por arquivos.

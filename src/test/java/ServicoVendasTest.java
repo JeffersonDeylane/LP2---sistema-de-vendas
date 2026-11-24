@@ -166,6 +166,31 @@ public class ServicoVendasTest {
     }
 
     @Test
+    public void apoioConsultaVendasDaEquipeComContaAtiva() throws Exception {
+        Fixture fixture = new Fixture(pasta.newFolder().toPath().resolve("base.xlsx"));
+        Apoio apoio = new Apoio(4, "Apoio", "apoio", "hash", true);
+        fixture.repositorioUsuarios.salvar(apoio);
+        Produto produto = fixture.servico.cadastrarProduto(fixture.admin, "P-10",
+            "Produto", "Unidade", new BigDecimal("3.00"), null, false);
+        Cliente cliente = fixture.servico.cadastrarCliente(fixture.vendedor, "CLI-10", "Cliente");
+        var itens = List.of(new ServicoVendas.ItemSolicitado(produto.getId(), BigDecimal.ONE));
+        Venda primeira = fixture.servico.criarRascunho(fixture.vendedor, cliente.getId(), null, itens);
+        Venda segunda = fixture.servico.criarRascunho(fixture.outroVendedor, cliente.getId(), null, itens);
+
+        assertEquals(List.of(primeira.getId(), segunda.getId()),
+            fixture.servico.listarVendas(apoio).stream().map(Venda::getId).sorted().toList());
+        assertThrows(IllegalArgumentException.class,
+            () -> fixture.servico.criarRascunho(apoio, cliente.getId(), null, itens));
+        assertThrows(IllegalArgumentException.class,
+            () -> fixture.servico.confirmar(apoio, primeira.getId()));
+
+        apoio.desativar();
+        fixture.repositorioUsuarios.salvar(apoio);
+        Apoio sessaoAnterior = new Apoio(apoio.getId(), "Apoio", "apoio", "hash", true);
+        assertThrows(IllegalArgumentException.class, () -> fixture.servico.listarVendas(sessaoAnterior));
+    }
+
+    @Test
     public void menuPermiteAdministradorPrepararCatalogoEVendedorConfirmarVenda() throws Exception {
         Path arquivo = pasta.newFolder().toPath().resolve("base-menu.xlsx");
         RepositorioUsuariosExcel repositorioUsuarios = new RepositorioUsuariosExcel(arquivo);
@@ -174,12 +199,15 @@ public class ServicoVendasTest {
         repositorioUsuarios.salvar(new Vendedor(2, "Vendedor", "vendedor",
             Senhas.gerarHash("senha-vendedor"), true, "V01"));
 
+        repositorioUsuarios.salvar(new Apoio(3, "Apoio", "apoio",
+            Senhas.gerarHash("senha-apoio"), true));
+
         InputStream entradaAnterior = System.in;
         PrintStream saidaAnterior = System.out;
         ByteArrayOutputStream captura = new ByteArrayOutputStream();
         String entradas = "1\nadmin\nsenha-admin\n7\nP-01\nProduto\nCategoria\n10,00\n\nn\n"
             + "5\n1\nvendedor\nsenha-vendedor\n6\nCLI-01\nCliente\n"
-            + "9\n1\n\n1\n1\n0\n10\n1\n11\n0\n";
+            + "9\n1\n\n1\n1\n0\n10\n1\n11\n5\n1\napoio\nsenha-apoio\n11\n0\n";
         try (PrintStream saida = new PrintStream(captura, true, StandardCharsets.UTF_8)) {
             System.setIn(new ByteArrayInputStream(entradas.getBytes(StandardCharsets.UTF_8)));
             System.setOut(saida);
@@ -194,6 +222,11 @@ public class ServicoVendasTest {
         assertTrue(texto.contains("Cliente cadastrado com ID 1."));
         assertTrue(texto.contains("salva em rascunho"));
         assertTrue(texto.contains("Venda 1 confirmada. Total: R$ 10.00"));
+        String sessaoApoio = texto.substring(texto.indexOf("Bem-vindo, Apoio!"));
+        assertTrue(sessaoApoio.contains("11 - Consultar vendas da equipe"));
+        assertTrue(sessaoApoio.contains("Venda 1 - CONFIRMADA"));
+        assertFalse(sessaoApoio.contains("9 - Registrar venda"));
+        assertFalse(sessaoApoio.contains("10 - Confirmar venda"));
         assertEquals(EstadoVenda.CONFIRMADA,
             new RepositorioVendasExcel(arquivo).listarVendas().get(0).getEstado());
     }
