@@ -14,11 +14,11 @@ Marcação `[x]` concluído, `[~]` parcial e `[ ]` pendente. Ao concluir uma tar
 
 | ID | Estado | Entrega e critério de conclusão | Referência |
 |---|:---:|---|---|
-| P0-01 | [x] | Perfis `Vendedor`, `Apoio` e `Administrador` derivados de `Usuario`, com capacidades polimórficas. [Evidência](P0-01_USUARIOS.md) | RN02 · 01, 09 |
-| P0-02 | [x] | Login, logout e cadastro de usuários pelo terminal com `ServicoAutenticacao`. A autenticação bloqueia contas inativas e o cadastro exige administrador ativo. | RN02 · 09 |
-| P0-03 | [x] | Persistir usuários com IDs, perfis e hash de senha na aba `USUARIOS` de `BASE_GERAL.xlsx`. Carga inicial, preservação de outras abas, backup e troca atômica disponíveis. [Evidência](P0-03_PERSISTENCIA_USUARIOS.md) | 06–09 |
-| P0-04 | [x] | Registrar clientes, produtos, contratos e vendas pelo terminal. O fluxo atual aceita contrato opcional, grava múltiplos itens, exige itens para confirmar e guarda preços e totais da venda. A consulta do vendedor retorna apenas suas vendas. | 01, 03, 06, 07 |
-| P0-05 | [x] | Processar RDT/VNA em Excel/CSV, cruzar com a base Claro quando disponível e gerar analíticos e o consolidado `dados/exportacao/vendas.xlsx`. | 05, 06 |
+| P0-01 | [x] Jefferson | Perfis `Vendedor`, `Apoio` e `Administrador` derivados de `Usuario`, com capacidades polimórficas. [Evidência](P0-01_USUARIOS.md) | RN02 · 01, 09 |
+| P0-02 | [x] Jefferson | marcone | Login, logout e cadastro de usuários pelo terminal com `ServicoAutenticacao`. A autenticação bloqueia contas inativas e o cadastro exige administrador ativo. | RN02 · 09 |
+| P0-03 | [x] marcone | jefferson| Persistir usuários com IDs, perfis e hash de senha na aba `USUARIOS` de `BASE_GERAL.xlsx`. Carga inicial, preservação de outras abas, backup e troca atômica disponíveis. [Evidência](P0-03_PERSISTENCIA_USUARIOS.md) | 06–09 |
+| P0-04 | [x] faby | Registrar clientes, produtos, contratos e vendas pelo terminal. O fluxo atual aceita contrato opcional, grava múltiplos itens, exige itens para confirmar e guarda preços e totais da venda. A consulta do vendedor retorna apenas suas vendas. | 01, 03, 06, 07 |
+| P0-05 | [x] jefferson | Processar RDT/VNA em Excel/CSV, cruzar com a base Claro quando disponível e gerar analíticos e o consolidado `dados/exportacao/vendas.xlsx`. | 05, 06 |
 | P0-06 | [~] | Completar a autorização nos serviços. Vendedor consulta o próprio escopo, sugere correções e solicita reativação. Apoio revisa solicitações e pode reativar. ADM tem acesso completo, gerencia usuários e gera relatórios gerais. Validar perfil, conta ativa e escopo em cada operação aplicável. | RN02 · 09 |
 | P0-07 | [~] | Completar a gestão de usuários no `ServicoUsuarios` e no terminal. O cadastro está ativo. Faltam edição, ativação e desativação persistidas com autorização administrativa. | RN02 · 09 |
 
@@ -37,7 +37,7 @@ Marcação `[x]` concluído, `[~]` parcial e `[ ]` pendente. Ao concluir uma tar
 
 | ID | Estado | Entrega e critério de conclusão | Depende de |
 |---|:---:|---|---|
-| P2-01 | [ ] | Integrar `ServicoImportacao` e `LoteImportacao` à leitura Excel/CSV. Preservar arquivos de origem, normalizar números de contrato, cadastrar novos registros válidos e comparar contratos existentes por campo. Criar `SolicitacaoAlteracao` apenas para diferenças, preservando dados atuais enquanto a revisão estiver pendente. Reimportar a mesma entrada sem duplicar contratos, itens ou pendências. **RN01 · 05–08** | P0-05, P1-02, P1-05 |
+| P2-01 | [ ] jefferson | Integrar `ServicoImportacao` e `LoteImportacao` à leitura Excel/CSV. Preservar arquivos de origem, normalizar números de contrato, cadastrar novos registros válidos e comparar contratos existentes por campo. Criar `SolicitacaoAlteracao` apenas para diferenças, preservando dados atuais enquanto a revisão estiver pendente. Reimportar a mesma entrada sem duplicar contratos, itens ou pendências. **RN01 · 05–08** | P0-05, P1-02, P1-05 |
 | P2-02 | [ ] | Implementar sugestões do vendedor e revisão por campo com `SolicitacaoAlteracao` e `DecisaoAlteracao`. Apoio/ADM aprova ou recusa com registro no histórico. Aplicar apenas campos aprovados e válidos, preservar valores recusados e revalidar os dados antes de gravar. Conflito passível de exceção exige confirmação explícita do Apoio e permanece pendente sem confirmação. **RN01, RN02, RN07, RN08 · 05–07** | P0-06, P1-06, P2-01 |
 | P2-03 | [ ] | Completar `PoliticaComissao`, `CalculadoraComissao` e `ParametrizacaoComissao` para cálculo por plano, combo, quantidade e operação. Persistir separadamente preço ao cliente, comissão informada e comissão calculada. Encaminhar divergências de comissão para revisão. Validar a tabela abaixo e preservar os valores já apurados. **RN01, RN06, RN09 · 02, 07** | P1-02, P1-05, P2-02 |
 | P2-04 | [ ] | Integrar `MudancaTecnologia` como operação com comissão de R$ 5,00. Apresentar essa operação separadamente no relatório e excluí-la da contagem de vendas comerciais. **RN09 · 01, 02** | P1-05, P2-03 |
@@ -89,3 +89,16 @@ Marcação `[x]` concluído, `[~]` parcial e `[ ]` pendente. Ao concluir uma tar
 | Comissões, cancelamento e relatórios | P2-03 a P2-08 | A escolher | A escolher | A definir |
 | Interface gráfica, se adotada | GUI-01 a GUI-05 | A escolher | A escolher | A definir |
 | Validação e entrega | P3-01 a P3-07 | A escolher | A escolher | A definir |
+
+
+## Pré-código
+
+| Estado | Ação | Responsável | Prazo |
+|:---:|---|---|---|
+| [x] | Definir a arquitetura da aplicação e as responsabilidades do terminal, do domínio, dos serviços e dos repositórios Excel. | | |
+| [x] | Revisar e aprovar com a equipe os diagramas do modelo-alvo que orientarão a implementação. | | |
+| [~] | Validar as regras de telecomunicações (RN01–RN11), priorizar as da primeira entrega e registrar decisões pendentes. | | |
+| [x] | Definir os fluxos prioritários e os cenários de aceitação da primeira entrega. | | |
+| [x] | Criar as tabelas nas abas necessárias de `BASE_GERAL.xlsx`, com cabeçalhos, IDs e vínculos conforme os diagramas. | | |
+| [x] | Preencher uma cópia da base com dados fictícios de usuários, clientes, produtos e contratos com múltiplos itens. | | |
+| [x] | Preparar planilhas de importação de exemplo, com um contrato novo e outro com divergência para revisão. | | |
