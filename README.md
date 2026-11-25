@@ -1,3 +1,7 @@
+# Sistema de vendas de telecomunicações
+
+Projeto de Linguagem de Programação II em Java para registrar vendas e contratos de telecomunicações, acompanhar a instalação dos produtos, revisar divergências de planilhas de parceiros e apurar comissões por vendedor. A estratégia segue as [regras RN01–RN11](docs/regras/REGRAS_DE_NEGOCIO.md) e o [modelo-alvo](docs/diagramas/DIAGRAMAS_COMPLETOS.md).
+
 ## Atualização P1 — Cadastro de vendas — 22/11/2026
 
 O perfil `Vendedor` já existente agora pode cadastrar clientes e registrar suas
@@ -40,20 +44,16 @@ Execute na raiz pelo PowerShell:
 
 Use **4** para cadastrar um vendedor (nome, login, senha e matrícula), **1**
 para entrar, **5** para sair da conta e **0** para encerrar. A opção **3** exige
-login. As contas são recuperadas de `dados/BASE_GERAL.xlsx`, aba `USUARIOS`;
+login. As contas são recuperadas da aba `USUARIOS` de `dados/BASE_GERAL.xlsx`.
 
 Validação deste upgrade: compilação com Temurin 25.0.5.1 para Java 25 e **84
 testes aprovados** com Maven. Os artefatos da validação ficam em `target/`,
 ignorado pelo Git.
 
 Veja [EXPLICACAO_LOGIN.txt](EXPLICACAO_LOGIN.txt) para detalhes das mudanças,
-do código reaproveitado do Marcone e dos limites. As descrições históricas abaixo
-que apontam login pendente ou usuários fixos no menu foram superadas por esta entrega.
+do código reaproveitado do Marcone e dos limites.
 
-#rodar main:
- & ".\FERRAMENTAS\apache-maven-3.10.0\bin\mvn.cmd" exec:java "-Dexec.mainClass=Main"
-usando o maven por causa do tratamento de planilha da transpiração.
-# Sistema de Gestão Comercial Flexível
+
 
 ## Atualização P0-03 — 14/11/2026
 
@@ -74,8 +74,7 @@ mvn test
 Cada atualização prepara e verifica um temporário, guarda a versão anterior em
 `BASE_GERAL.xlsx.bak` e exige substituição atômica. A base, o backup e seus
 temporários padrão estão no `.gitignore`. Não são gerados usuários administrativos
-nem persistidos os exemplos da demonstração. Login e cadastro administrativo
-continuam pendentes.
+nem persistidos os exemplos da demonstração. Login e cadastro administrativo chegaram na entrega de 16/11/2026.
 
 Foram executados **54 testes, sem falhas, erros ou ignorados**. Veja o
 [esquema implementado](docs/planejamento/ESTRUTURA_DADOS.md) e o
@@ -92,67 +91,31 @@ serviços de autenticação e autorização por escopo.
 O build atual usa o `pom.xml` da raiz: `mvn test`. Foram executados **19 testes,
 sem falhas ou erros** (14 de usuários e 5 de processamento), além da demonstração
 do menu com as opções 2 e 0. Consulte as [decisões, comandos e limites da entrega](docs/planejamento/P0-01_USUARIOS.md).
-As seções abaixo preservam a revisão histórica de 08/11/2026; suas referências a
-build aninhado, ausência de testes e perfis incompletos estão desatualizadas.
-
-Projeto de Linguagem de Programação II em Java, em evolução para uma plataforma de gestão comercial de produtos e serviços de diferentes segmentos.
-
-A proposta é reunir catálogo configurável, vendas com múltiplos itens, contratos opcionais, comissões, usuários, solicitações e histórico. O público-alvo são vendedores, equipes de apoio e administradores que precisam preservar condições comerciais e revisar divergências de fontes externas.
-
-**Estágio atual:** há um início de aplicação por terminal e um módulo separado de processamento de planilhas de telecomunicações. O núcleo comercial flexível ainda não foi implementado. As instruções Java abaixo foram conferidas contra os caminhos/classes, mas **não executadas nesta revisão**: JDK/Maven não foram encontrados no PATH consultado.
-
-## Documentação oficial
+## Documentação do projeto
 
 | Documento | Finalidade |
 |---|---|
-| [Especificação das Regras de Negócio](docs/regras/REGRAS_DE_NEGOCIO.md) | Fonte oficial do comportamento comercial pretendido |
-| [Requisitos Acadêmicos — Unidade 03](docs/requisitos/REQUISITOS_ATIVIDADE_UNIDADE_03.md) | Critérios do professor, checklist e evidências |
-| [Status Atual e Diagnóstico Técnico](docs/STATUS_DO_PROJETO.md) | Inventário real, lacunas, verificações e prioridades |
-| [UML existente](docs/diagramas/DIAGRAMAS_COMPLETOS.md) | Planejamento legado, ainda não correspondente à visão flexível nem a todo o código |
-| [Diagrama separado de usuários](docs/diagramas/09-usuários.mmd) | Complemento de planejamento; também requer atualização |
+| [Regras de negócio](docs/regras/REGRAS_DE_NEGOCIO.md) | Especificação RN01–RN11 de telecomunicações |
+| [Checklist](docs/planejamento/CHECKLIST.md) | Entregas, dependências e critérios de conclusão |
+| [Diagramas 01–09](docs/diagramas/README.md) | Estruturas do código atual e seus estados de implementação |
+| [Modelo-alvo](docs/diagramas/DIAGRAMAS_COMPLETOS.md) | Contratos, estados, comissões, revisão e cascata |
+| [Diagnóstico técnico](docs/STATUS_DO_PROJETO.md) | Fluxos ativos e lacunas |
+| [Requisitos da Unidade 03](docs/requisitos/REQUISITOS_ATIVIDADE_UNIDADE_03.md) | Critérios acadêmicos e evidências |
 
-Os documentos em docs/planejamento e os diagramas foram preservados nesta revisão. Referências antigas a RN01–RN11, produto principal de telecomunicações e contrato obrigatório são históricas; não substituem a nova especificação. As regras genéricas atuais têm numeração própria na versão documental 2.
+## Estratégia e funcionalidades
 
-## Funcionalidades e disponibilidade
-
-### Implementadas no código
-
-- Menu por terminal com opções de descrição, tentativa de login e saída. A opção de login apenas informa que está pendente.
-- Usuario abstrato, Vendedor e validação de atributos; exemplos fixos executados antes do menu.
-- Processamento especializado de XLS/XLSX/CSV, com indicadores comerciais e identificação da empresa de origem.
-- Conciliação de contratos com abas complementares da Claro.
-- Consolidação dos analíticos em vendas.xlsx.
-- Relatórios por supervisor/vendedor e por vendedor/data de instalação.
-
-As cinco operações de processamento estão em um módulo independente, sem integração ao menu. “Implementado no código” não significa execução completa validada. Python e Java oferecem versões semelhantes dessas operações, sem duplicar a contagem.
-
-### Parcialmente implementadas
-
-- Permissões: Vendedor nega aprovação e gestão de usuários e consulta ativo para permitir solicitação; faltam os outros perfis e as operações protegidas.
-- Situação de usuário: ativação/desativação em memória; não há transições comerciais controladas.
-- Entrada/saída de planilhas: grava resultados, mas não persiste nem recupera entidades da aplicação.
-
-### Planejadas
-
-- Categorias, tipos de unidade e unidades cadastrados dinamicamente.
-- Produtos/serviços com categoria e unidade opcional; item sem unidade tem quantidade 1.
-- Clientes, vendas com múltiplos itens e contrato opcional do mesmo cliente.
-- Fotografia histórica de preço, unidade, quantidade e condições comerciais.
-- Políticas percentuais de comissão configuráveis, sem taxas universais por segmento.
-- Autenticação, Vendedor/Apoio/Administrador e autorização nos serviços.
-- Solicitações sem autoaprovação, revisão de divergências, cancelamento e reativação rastreáveis.
-- Histórico preservado, conciliação idempotente e recuperação automática dos dados.
-
-Não fazem parte desta etapa estoque, emissão fiscal, gateway de pagamento, API REST, microserviços ou conversão automática de unidades.
+- **Operação atual.** O terminal oferece login, cadastro de usuários e cadastro inicial de clientes, produtos, contratos e vendas. A persistência usa `dados/BASE_GERAL.xlsx`.
+- **Integração atual.** O menu executa o processamento RDT/VNA, cruza dados com a base Claro quando disponível e gera analíticos e consolidados.
+- **Próxima etapa.** Estruturar contrato com múltiplos produtos e estado por item, integrar a revisão por campo e o histórico e implementar comissão, elegibilidade e cancelamento/reativação em cascata. A Mudança de Tecnologia terá classificação própria nos relatórios.
 
 ## Tecnologias e pré-requisitos
 
-As versões declaradas pertencem ao [pom.xml do módulo](src/main/python/java_transpilado_lp2/pom.xml). O repositório não possui build Maven na raiz.
+As dependências Java estão no [pom.xml da raiz](pom.xml).
 
 | Tecnologia | Versão/evidência | Necessidade |
 |---|---|---|
 | JDK | Java 21 declarado por maven.compiler.release | Compilar/executar Java; usar JDK, não apenas JRE |
-| Maven | Versão não fixada; sem wrapper | Somente processamento Java |
+| Maven | Versão não fixada; sem wrapper | Aplicação e testes Java |
 | Apache POI poi-ooxml | 5.4.1 | Excel no módulo Java |
 | Apache Commons CSV | 1.13.0 | CSV no módulo Java |
 | Maven Compiler Plugin | 3.13.0 | Compilação do módulo |
@@ -163,7 +126,7 @@ As versões declaradas pertencem ao [pom.xml do módulo](src/main/python/java_tr
 | Microsoft Excel desktop | Versão não declarada e instalação não verificada | Tabelas dinâmicas do Python; dispensável no Java |
 | xlrd | Não importado diretamente nem fixado; mecanismo adicional para XLS no pandas | Quando utilizar XLS no Python |
 
-Git é necessário para obter o projeto por clone. Maven precisa de acesso aos repositórios de dependências no primeiro build. Não há requirements.txt, ambiente Python fixado ou suíte de testes configurada.
+Git é necessário para obter o projeto por clone. Maven precisa de acesso aos repositórios de dependências no primeiro build. As dependências Python são instaladas separadamente.
 
 Na análise de 08/11/2026, Python, pandas e openpyxl estavam disponíveis; win32com e xlrd não foram localizados. Java/javac/Maven não foram encontrados no PATH. Isso descreve o ambiente consultado, não uma ausência comprovada em toda a máquina.
 
@@ -173,7 +136,7 @@ Os comandos são para **PowerShell**, a partir da raiz do repositório, salvo in
 
 ### 1. Obter o projeto
 
-Se já possui o repositório, abra um terminal na pasta existente. Para uma nova cópia, informe a URL verdadeira no prompt; o link oficial ainda deve ser preenchido pela equipe:
+Se já possui o repositório, abra um terminal na pasta existente. Para obter uma cópia, use a URL do repositório na seção de entrega.
 
 ~~~powershell
 $urlRepositorio = Read-Host "Informe a URL Git do repositorio"
@@ -181,11 +144,9 @@ git clone "$urlRepositorio" "LP2---sistema-de-vendas"
 Set-Location "LP2---sistema-de-vendas"
 ~~~
 
-O clone não foi executado na revisão. Não há URL fictícia apresentada como endereço oficial.
-
 ### 2. Conferir o ambiente
 
-Instale/configure JDK 21 ou superior e, para o módulo de planilhas, Maven. Disponibilize seus executáveis no PATH e confira:
+Configure JDK 21 ou superior e Maven. Disponibilize seus executáveis no PATH e confira:
 
 ~~~powershell
 java -version
@@ -203,18 +164,11 @@ Python 3.11.9 foi observado, mas não é declarado como versão mínima ou únic
 
 ### 3. Compilar e iniciar o menu Java
 
-A aplicação inicial usa apenas a biblioteca padrão Java. Compile os quatro arquivos explicitamente:
-
 ~~~powershell
-javac -encoding UTF-8 -d out src/main/java/Main.java src/main/java/Usuario.java src/main/java/Vendedor.java src/main/java/Validador.java
-java -cp out Main
+mvn compile exec:java "-Dexec.mainClass=Main"
 ~~~
 
-Esses comandos se referem ao menu atual, sem o processamento de planilhas. Não foram verificados por execução nesta revisão. A pasta out é artefato local ignorado pelo Git.
-
-**Uso atual:** aparecem os dados fictícios e mensagens de validação da demonstração; depois, digite 2 para ler a descrição, 1 para ver o aviso de login não implementado e 0 para sair. Sequência demonstrativa de entradas: 2, depois 0. O resultado é esperado pela leitura do código, sem execução Java comprovada.
-
-Não há credencial de acesso funcional, cadastro/consulta comercial ou importação pelo menu. O nome antigo ainda aparece no terminal.
+Entre com uma conta ativa em **1**. Use **3** para processar as planilhas, **5** para sair da conta e **0** para encerrar. As opções de cadastro, confirmação e consulta estão descritas na atualização P1 acima.
 
 ### 4. Preparar dados da integração especializada
 
@@ -244,16 +198,11 @@ Não foi confirmado um arquivo real com esses cabeçalhos; o esquema foi extraí
 
 ### 5. Compilar e executar o processamento Java
 
-Permaneça na raiz. A opção -f seleciona o pom.xml existente e evita a instrução incorreta de executar mvn compile na raiz sem configuração:
+Use a opção **3** do menu após autenticar ou execute o processamento diretamente da raiz:
 
 ~~~powershell
-mvn -f src/main/python/java_transpilado_lp2/pom.xml compile
-mvn -f src/main/python/java_transpilado_lp2/pom.xml exec:java "-Dexec.mainClass=lp2.processamento.ExecutarProcessamento" "-Dexec.args=."
+mvn compile exec:java "-Dexec.mainClass=lp2.processamento.ExecutarProcessamento" "-Dexec.args=."
 ~~~
-
-Comandos conferidos contra o pom.xml e a classe principal, **não executados nesta revisão**. O argumento ponto representa a raiz a partir do diretório de trabalho; execute os comandos nessa raiz.
-
-O Maven resolve as dependências declaradas no build. Não é necessário copiar classes ou substituir configurações para executar o módulo isolado. O README interno do módulo descreve uma integração manual anterior, ainda não realizada no projeto.
 
 Comportamentos a considerar:
 
@@ -298,64 +247,35 @@ O comando não foi executado na revisão. O módulo win32com estava ausente e n�
 | dados/exportacao/vendas.xlsx | Consolidado dos analíticos |
 | Abas Planilha1 e Planilha2 | Resumos no Java; tabelas dinâmicas nativas no Python |
 
-Esses arquivos são saídas da integração, não a base persistente do domínio genérico. BASE_GERAL.xlsx continua planejada e não é carregada pelo Main.
+O cadastro da aplicação fica em `dados/BASE_GERAL.xlsx`. As saídas acima são geradas pelo processamento RDT/VNA.
 
-### 8. Testes e limites da validação
-
-Não existe suíte automatizada no repositório. A pasta src/test/java contém apenas .gitkeep. Quando o ambiente Maven estiver preparado, o ciclo pode ser solicitado assim:
+### 8. Testes
 
 ~~~powershell
-mvn -f src/main/python/java_transpilado_lp2/pom.xml test
+mvn test
 ~~~
 
-Esse comando não foi executado. Mesmo se retornar sucesso sem testes, isso **não comprova regras, persistência ou funcionalidades**. Também não testa o Main externo ao módulo.
+A suíte em `src/test/java/` cobre usuários, autenticação, persistência, vendas e processamento de planilhas. Consulte o [diagnóstico](docs/STATUS_DO_PROJETO.md) para o registro das execuções anteriores.
 
-Nesta revisão foram aprovadas 18 assertivas em três funções Python isoladas, usando objetos em memória, além da sintaxe Python e estrutura XML do pom.xml. Não foram criados arquivos de teste; esse ensaio não substitui suíte versionada ou execução ponta a ponta. Detalhes e a limitação de encoding da primeira tentativa estão no diagnóstico técnico.
+## Exemplo do fluxo comercial planejado
 
-## Exemplo conceitual da visão futura
+Em um contrato com VIRTUA, TV e CHIP, cada item terá seu próprio estado e comissão. VIRTUA é o produto principal e seu estado determina o estado geral do contrato. Se uma importação trouxer comissão diferente da registrada, Apoio ou ADM revisa o campo antes de aplicar a mudança. O cancelamento da TV agrupa os itens ativos afetados, preservando VIRTUA. A reativação pela raiz restaura para CADASTRADA os itens aptos daquele grupo.
 
-**Não executável no sistema atual:** cadastrar categoria “Serviços”, tipo “Tempo”, unidade “Hora” com frações e um produto de consultoria; vender 1,5 hora sem contrato; preservar preço/unidade da venda e calcular comissão pelo percentual configurado. Um serviço sem unidade seria outro item com quantidade exatamente 1.
+## Arquitetura
 
-O exemplo orienta a modelagem e não é uma funcionalidade disponível. Taxas, estados e arredondamento propostos precisam ser confirmados pela equipe na especificação.
-
-## Arquitetura e estrutura
-
-O núcleo inicial de usuários não depende do módulo de planilhas. ProcessadorPlanilhas funciona como fachada de leitura, tratamento, filtros, cruzamento, relatórios e consolidação. RegraProduto define uma estratégia executada por implementações próprias. PlanilhasIO concentra entrada/saída Excel/CSV. Ainda não há MVC completo nem repositórios de entidades.
-
-~~~text
-/
-├── README.md
-├── dados/{exemplos,importacao,exportacao}/
-├── docs/
-│   ├── STATUS_DO_PROJETO.md
-│   ├── regras/REGRAS_DE_NEGOCIO.md
-│   ├── requisitos/REQUISITOS_ATIVIDADE_UNIDADE_03.md
-│   ├── planejamento/
-│   └── diagramas/
-└── src/
-    ├── main/
-    │   ├── java/{Main,Usuario,Vendedor,Validador}.java
-    │   └── python/
-    │       ├── processar_planilhas_minusculas.py
-    │       └── java_transpilado_lp2/
-    │           ├── pom.xml
-    │           └── src/main/java/lp2/processamento/
-    └── test/java/.gitkeep
-~~~
-
-A direção futura separa apresentação, domínio comercial, serviços autorizados, persistência e adaptação de fontes. Categorias e unidades são entidades dinâmicas; regras de telecomunicações ficam na integração. Isso é objetivo arquitetural, não estrutura já concluída.
+`Main` integra `ServicoAutenticacao`, `ServicoVendas` e `ProcessadorPlanilhas`. Os repositórios Excel de usuários e vendas compartilham a base central. O processamento usa `PlanilhasIO` para ler arquivos de entrada e gravar relatórios. Os [diagramas](docs/diagramas/README.md) registram a integração prevista dos serviços de contrato, importação e cancelamento.
 
 ## Cinco situações de risco
 
-As mitigações abaixo são propostas; não estão todas implementadas. Os cenários usam classes reais, pois o catálogo comercial flexível ainda não existe em código.
+As mitigações abaixo orientam a evolução dos serviços atuais.
 
-### Risco 1 — Operação sem proteção ao integrar usuários
+### Risco 1 — Revisão ou reativação fora da permissão do perfil
 
-- **Situação:** um futuro fluxo comercial usa o Vendedor criado pelo Main como se houvesse sessão autenticada.
-- **Problema:** Usuario apenas armazena dados; Vendedor consulta permissões, mas não há autenticação ou serviço que proteja operações. O menu atual ainda não oferece essas operações.
-- **Impacto:** ao integrar funcionalidades sem essa proteção, seria possível atribuir ação a usuário não autenticado, inativo ou fora do seu escopo.
-- **Mitigação:** implementar autenticação e exigir identidade, situação e permissão nos serviços antes de disponibilizar operações.
-- **Classes relacionadas:** Main, Usuario, Vendedor.
+- **Situação:** um vendedor solicita correção ou reativação de uma venda.
+- **Problema:** se o novo serviço confiar apenas na opção exibida pelo menu, uma chamada direta pode contornar a permissão.
+- **Impacto:** uma alteração pode ser aplicada por usuário fora do próprio escopo ou sem autorização de Apoio/ADM.
+- **Mitigação:** aplicar no serviço a validação de sessão, perfil e escopo e registrar o autor da decisão.
+- **Classes relacionadas:** `ServicoAutenticacao`, `ServicoVendas`, `ServicoImportacao`, `ServicoCancelamento` e `Usuario`.
 
 ### Risco 2 — Valor importado convertido silenciosamente em zero
 
@@ -365,12 +285,12 @@ As mitigações abaixo são propostas; não estão todas implementadas. Os cená
 - **Mitigação:** validar formato monetário por fonte, rejeitar/avisar por registro e usar BigDecimal no futuro domínio comercial.
 - **Classes relacionadas:** TabelaDados, GeradorRelatorios, PlanilhasIO.
 
-### Risco 3 — Origem genérica classificada como empresa de telecomunicações
+### Risco 3 — Arquivo classificado no parceiro incorreto
 
-- **Situação:** arquivo de outro segmento, sem VNA no nome, é colocado em dados/importacao.
+- **Situação:** arquivo da VNA renomeado sem VNA no nome, é colocado em dados/importacao.
 - **Problema:** a classificação atual assume RDT para nomes sem VNA e aplica filtros de parceiros/códigos específicos.
-- **Impacto:** dados podem ser atribuídos à empresa errada ou excluídos inadequadamente; o processamento não é importador genérico.
-- **Mitigação:** validar origem explicitamente e desenvolver adaptação especializada antes de fornecer dados ao domínio flexível.
+- **Impacto:** dados podem ser atribuídos à empresa errada ou excluídos inadequadamente.
+- **Mitigação:** validar a origem do lote antes de comparar os contratos da base.
 - **Classes relacionadas:** ProcessadorPlanilhas, TratadorAnalitico, ComplementadorClaro.
 
 ### Risco 4 — Perda de resultados ao reexecutar
@@ -389,23 +309,23 @@ As mitigações abaixo são propostas; não estão todas implementadas. Os cená
 - **Mitigação:** validar cabeçalhos obrigatórios por aba, interromper ou sinalizar lote incompleto e propagar avisos ao resultado.
 - **Classes relacionadas:** ComplementadorClaro, TabelaDados, CruzadorContratos, ResultadoProcessamento.
 
-## Regras identificadas, mas não implementadas
+## Regras de telecomunicações pendentes
 
-A [especificação completa](docs/regras/REGRAS_DE_NEGOCIO.md) contém condições, proibições e cenários de aceitação. A numeração desta tabela corresponde à visão genérica vigente.
-
-| Regras | Pendência atual |
+| Regra | Situação atual e entrega pendente |
 |---|---|
-| RN01–RN03 | Categorias, tipos/unidades e produtos dinâmicos; disponibilidade e preservação de vínculos |
-| RN04 | Quantidade indivisível sem unidade e frações conforme configuração |
-| RN05–RN07 | Cliente, contrato opcional, venda válida e fotografia histórica |
-| RN08 | **Parcial:** completar autenticação, perfis, escopo e autorização efetiva |
-| RN09–RN10 | Solicitações sem autoaprovação/duplicação e transições controladas |
-| RN11–RN13 | Comissão percentual, unicidade, elegibilidade e pagamento rastreado |
-| RN14–RN15 | Cancelamento e reativação seletiva sem apagar histórico |
-| RN16–RN17 | Adaptação ao domínio genérico e conciliação idempotente |
-| RN18 | Histórico persistente e preservado |
+| RN01 — Revisão de contratos | O cruzamento de planilhas identifica diferenças. Falta registrar divergências e aplicar aprovação/recusa por campo pelo Apoio/ADM, preservando o valor recusado. Confirmar se o número do contrato é único por empresa. |
+| RN02 — Perfis | Login, cadastro administrativo e escopo das próprias vendas já funcionam. Faltam sugestões e pedidos de reativação pelo Vendedor, revisão e reativação por Apoio/ADM, manutenção de usuários e relatórios gerais para ADM. |
+| RN03 — Contratos e itens | A venda pode ter vários itens e vínculo com contrato. Falta completar o modelo de telecomunicações com quantidade, estado e comissão por item e contagens distintas de contratos e itens. |
+| RN04 — Estados | O fluxo ativo confirma vendas em rascunho. Falta integrar por item o ciclo CADASTRADA → AGENDADA → INSTALADA, o cancelamento nos três estados e o retorno autorizado para CADASTRADA. |
+| RN05 — Produto principal | Falta aplicar VIRTUA > TV > CHIP > FONE e derivar o estado geral do contrato. Confirmar empates e contratos só com adicionais. |
+| RN06 — Comissões | Falta calcular por plano, combo, quantidade ou operação, guardar separadamente preço, comissão informada e calculada e encaminhar divergências para revisão. A tabela completa de planos, vigências e combos ainda precisa de confirmação. |
+| RN07 — Conflitos | Falta pedir confirmação explícita ao Apoio quando houver exceção comercial permitida, respeitar as validações obrigatórias e registrar a decisão. |
+| RN08 — Histórico | Falta persistir responsável, perfil, data/hora, campo, antes/depois, motivo e autorizações para alterações, cancelamentos e reativações. |
+| RN09 — Mudança de Tecnologia | Falta registrar a operação separadamente, aplicar R$ 5,00 por operação e apresentá-la fora da contagem de vendas comerciais. |
+| RN10 — Elegibilidade | Falta apurar elegibilidade de venda instalada e de Mudança de Tecnologia cadastrada, cuja elegibilidade termina no cancelamento. Preservar apurações e confirmar critérios para itens secundários e pagamentos já realizados. |
+| RN11 — Cascata | Falta cancelar os itens ativos conforme a origem (VIRTUA atinge todos, TV exclui VIRTUA, demais cancelam apenas o próprio item) e permitir que Apoio/ADM reative pela raiz apenas os itens afetados pelo grupo original, preservando cancelamentos anteriores e mudanças posteriores. |
 
-Nenhuma das 18 regras genéricas está completa. As quatro políticas comerciais do processamento legado são registradas separadamente no diagnóstico; não substituem o desenvolvimento do núcleo genérico.
+Consulte o [checklist](docs/planejamento/CHECKLIST.md) para dependências, valores comerciais e critérios de conclusão.
 
 ## Desenvolvimento colaborativo
 
@@ -419,22 +339,21 @@ O repositório possui histórico Git, mas não comprova uma convenção históri
 - Preservar português nos identificadores do domínio, convenções Java e nomes próprios de APIs externas.
 - Não versionar credenciais, dados comerciais reais ou ambientes locais. Conferir o conteúdo antes de adicionar arquivos.
 
-A suíte de testes ainda precisa ser criada. Os cinco commits existentes não demonstram, por si, colaboração de três/quatro pessoas.
+Cada integrante deve registrar suas contribuições e evidências de teste.
 
 ## Integrantes
 
-Preencher com a composição real, de três ou quatro integrantes, sem inventar dados:
+Equipe registrada no checklist. Confirmar nomes completos e matrículas.
 
 | Integrante | Nome completo | Matrícula |
 |---|---|---|
-| 1 | A preencher | A preencher |
-| 2 | A preencher | A preencher |
-| 3 | A preencher | A preencher |
-| 4, se aplicável | A preencher ou remover linha | A preencher |
+| 1 | Jefferson | A preencher |
+| 2 | Marcone | A preencher |
+| 3 | Faby | A preencher |
 
 ## Repositório e apresentação acadêmica
 
-- **Link oficial do repositório:** a preencher pela equipe.
+- **Repositório:** [LP2 — Sistema de vendas](https://github.com/JeffersonDeylane/LP2---sistema-de-vendas).
 - **Prazo e turma:** conferir no enunciado/SIGAA.
 - **Responsável único pelo envio:** a definir.
 - **Pacote de código-fonte ZIP:** preparar e conferir na entrega; ainda não gerado.
