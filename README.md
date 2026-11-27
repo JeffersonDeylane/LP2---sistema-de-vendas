@@ -151,7 +151,7 @@ As versões declaradas pertencem ao [pom.xml do módulo](src/main/python/java_tr
 
 | Tecnologia | Versão/evidência | Necessidade |
 |---|---|---|
-| JDK | Java 21 declarado por maven.compiler.release | Compilar/executar Java; usar JDK, não apenas JRE |
+| JDK | Java 17 declarado por maven.compiler.release | Compilar/executar Java; usar JDK, não apenas JRE |
 | Maven | Versão não fixada; sem wrapper | Somente processamento Java |
 | Apache POI poi-ooxml | 5.4.1 | Excel no módulo Java |
 | Apache Commons CSV | 1.13.0 | CSV no módulo Java |
@@ -185,7 +185,7 @@ O clone não foi executado na revisão. Não há URL fictícia apresentada como 
 
 ### 2. Conferir o ambiente
 
-Instale/configure JDK 21 ou superior e, para o módulo de planilhas, Maven. Disponibilize seus executáveis no PATH e confira:
+Instale/configure JDK 17 e, para o módulo de planilhas, Maven. Disponibilize seus executáveis no PATH e confira:
 
 ~~~powershell
 java -version
