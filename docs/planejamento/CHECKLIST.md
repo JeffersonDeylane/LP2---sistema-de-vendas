@@ -20,7 +20,7 @@ Marcação `[x]` concluído, `[~]` parcial e `[ ]` pendente. Ao concluir uma tar
 | P0-04 | [x] faby | Registrar clientes, produtos, contratos e vendas pelo terminal. O fluxo atual aceita contrato opcional, grava múltiplos itens, exige itens para confirmar e guarda preços e totais da venda. A consulta do vendedor retorna apenas suas vendas. | 01, 03, 06, 07 |
 | P0-05 | [x] jefferson | Processar RDT/VNA em Excel/CSV, cruzar com a base Claro quando disponível e gerar analíticos e o consolidado `dados/exportacao/vendas.xlsx`. | 05, 06 |
 | P0-06 | [~] | Completar a autorização nos serviços. Vendedor consulta o próprio escopo, sugere correções e solicita reativação. Apoio revisa solicitações e pode reativar. ADM tem acesso completo, gerencia usuários e gera relatórios gerais. Validar perfil, conta ativa e escopo em cada operação aplicável. | RN02 · 09 |
-| P0-07 | [~] | Completar a gestão de usuários no `ServicoUsuarios` e no terminal. O cadastro está ativo. Faltam edição, ativação e desativação persistidas com autorização administrativa. | RN02 · 09 |
+| P0-07 | [~] Marcone | Completar a gestão de usuários no `ServicoUsuarios` e no terminal. O cadastro está ativo. Faltam edição, ativação e desativação persistidas com autorização administrativa. | RN02 · 09 |
 
 ## P1 — Contratos, itens, estados e persistência
 

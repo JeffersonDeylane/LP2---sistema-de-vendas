@@ -66,6 +66,67 @@ public class ServicoAutenticacaoTest {
         assertEquals(1, repositorio.listar().size());
     }
 
+    @Test public void rejeitaCadastroPorAdministradorAusenteDaBase() throws Exception {
+        Path arquivo = pasta.getRoot().toPath().resolve("base.xlsx");
+        RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivo);
+        ServicoAutenticacao servico = new ServicoAutenticacao(repositorio);
+        guardarAdminPadrao(repositorio);
+        Usuario administrador = new Administrador(2, "Outro admin", "outro.admin", "hash", true);
+        byte[] antes = Files.readAllBytes(arquivo);
+
+        assertThrows(IllegalArgumentException.class, () -> servico.cadastrar(
+            administrador, "APOIO", "Novo apoio", "novo.apoio", "senha", ""));
+        assertArrayEquals(antes, Files.readAllBytes(arquivo));
+    }
+
+    @Test public void rejeitaCadastroAposDesativarAdministradorNaBase() throws Exception {
+        Path arquivo = pasta.getRoot().toPath().resolve("base.xlsx");
+        RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivo);
+        ServicoAutenticacao servico = new ServicoAutenticacao(repositorio);
+        guardarAdminPadrao(repositorio);
+        Usuario administrador = servico.autenticar("admin", "admin");
+        Usuario persistido = repositorio.listar().get(0);
+        persistido.desativar();
+        repositorio.salvar(persistido);
+        byte[] antes = Files.readAllBytes(arquivo);
+
+        assertTrue(administrador.isAtivo());
+        assertThrows(IllegalArgumentException.class, () -> servico.cadastrar(
+            administrador, "APOIO", "Novo apoio", "novo.apoio", "senha", ""));
+        assertArrayEquals(antes, Files.readAllBytes(arquivo));
+    }
+
+    @Test public void rejeitaCadastroAposAlterarPerfilDoAdministradorNaBase() throws Exception {
+        Path arquivo = pasta.getRoot().toPath().resolve("base.xlsx");
+        RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivo);
+        ServicoAutenticacao servico = new ServicoAutenticacao(repositorio);
+        guardarAdminPadrao(repositorio);
+        Usuario administrador = servico.autenticar("admin", "admin");
+        repositorio.salvar(new Apoio(administrador.getId(), administrador.getNome(),
+            administrador.getLogin(), administrador.getSenhaHash(), true));
+        byte[] antes = Files.readAllBytes(arquivo);
+
+        assertThrows(IllegalArgumentException.class, () -> servico.cadastrar(
+            administrador, "APOIO", "Novo apoio", "novo.apoio", "senha", ""));
+        assertArrayEquals(antes, Files.readAllBytes(arquivo));
+    }
+
+    @Test public void rejeitaCadastroAposAlterarLoginDoAdministradorNaBase() throws Exception {
+        Path arquivo = pasta.getRoot().toPath().resolve("base.xlsx");
+        RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivo);
+        ServicoAutenticacao servico = new ServicoAutenticacao(repositorio);
+        guardarAdminPadrao(repositorio);
+        Usuario administrador = servico.autenticar("admin", "admin");
+        Usuario persistido = repositorio.listar().get(0);
+        persistido.alterarLogin("admin.alterado");
+        repositorio.salvar(persistido);
+        byte[] antes = Files.readAllBytes(arquivo);
+
+        assertThrows(IllegalArgumentException.class, () -> servico.cadastrar(
+            administrador, "APOIO", "Novo apoio", "novo.apoio", "senha", ""));
+        assertArrayEquals(antes, Files.readAllBytes(arquivo));
+    }
+
     @Test public void rejeitaDuplicataSenhaVaziaContaInativaECredenciaisErradas() throws Exception {
         Path arquivo = pasta.getRoot().toPath().resolve("base.xlsx");
         RepositorioUsuariosExcel repositorio = new RepositorioUsuariosExcel(arquivo);
