@@ -17,6 +17,14 @@ public final class ServicoAutenticacao {
         }
         String loginValidado = Validador.textoObrigatorio(login, "Login");
         List<Usuario> usuarios = repositorio.listar();
+        Usuario persistido = usuarios.stream()
+            .filter(usuario -> usuario.getId() == solicitante.getId())
+            .findFirst().orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+        if (persistido.getClass() != solicitante.getClass()
+                || !persistido.getLogin().equals(solicitante.getLogin())
+                || !persistido.isAtivo() || !persistido.podeGerenciarUsuarios()) {
+            throw new IllegalArgumentException("Apenas um administrador ativo pode cadastrar usuários.");
+        }
         if (usuarios.stream().anyMatch(u -> u.getLogin().equalsIgnoreCase(loginValidado))) {
             throw new IllegalArgumentException("Este login já está cadastrado.");
         }
